@@ -6,6 +6,7 @@ public class MT {
         System.out.println("当前--主线程的id：" + Thread.currentThread().getId());
 //        ThreadIns threadIns =new ThreadIns();
 //        threadIns.start();
+
 //        for (int i = 0; i < 10; i++) {
 //            new ThreadIns().start();
 //        }
