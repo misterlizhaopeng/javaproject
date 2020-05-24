@@ -24,11 +24,15 @@ public class MT {
 
 
         for (int i = 0; i < 10; i++) {
-            new Thread(()->{
+            new Thread(() -> {
                 LHPattern lhPatternIns = LHPattern.getLHPatternIns();
                 System.out.println("thread name=" + Thread.currentThread().getName() + ",ins=" + lhPatternIns);
 
             }).start();
+
+            if (i == 9)
+                System.out.println("--------------------------------->"+i);
+
         }
 
 
