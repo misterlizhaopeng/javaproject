@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="designpattern" />
+        <module name="hsmap" />
         <module name="javalang" />
         <module name="javathread" />
       </profile>

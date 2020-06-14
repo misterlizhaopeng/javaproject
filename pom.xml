@@ -12,6 +12,7 @@
     <module>design-pattern</module>
     <module>java-thread</module>
     <module>java-lang</module>
+      <module>hsmap</module>
   </modules>
 
 </project>

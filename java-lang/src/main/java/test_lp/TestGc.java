@@ -31,10 +31,23 @@ public class TestGc {
 
     // -Xms1m -Xmx8m -XX:+HeapDumpOnOutOfMemoryError
     @Test
-    public void test() {
+    public void test() throws Exception{
         String str = "first String";
+
         while (true) {
-            str += str + new Random().nextInt(88888888) + new Random().nextInt(999999999);
+            StringBuilder sb=new StringBuilder();
+            int i = new Random().nextInt(88888888) + new Random().nextInt(999999999);
+            System.out.println(i);
+
+            sb.append(str);
+            sb.append(i);
+            String s = sb.toString();
+            System.out.println(s);
+            sb=null;
+
+            //str += str + i;
+
+            Thread.sleep(1);
         }
     }
 }
