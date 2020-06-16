@@ -13,6 +13,7 @@
     <module>java-thread</module>
     <module>java-lang</module>
       <module>hsmap</module>
+      <module>Algorithm</module>
   </modules>
 
 </project>
