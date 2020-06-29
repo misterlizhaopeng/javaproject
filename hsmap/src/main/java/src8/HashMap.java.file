@@ -706,7 +706,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
         }
         ++modCount;
-        //如果当前size的熟练大于阈值，进行数组初始化或者扩容
+        //如果当前size的数量大于阈值，进行数组初始化或者扩容
         if (++size > threshold)
             resize();
         afterNodeInsertion(evict);

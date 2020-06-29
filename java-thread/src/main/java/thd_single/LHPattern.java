@@ -1,7 +1,7 @@
 package thd_single;
 
 public class LHPattern {
-    private static LHPattern lhPattern = null;
+    private static volatile LHPattern lhPattern = null;
 
     private LHPattern() {
     }
