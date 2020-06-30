@@ -8,9 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Algorithm" />
         <module name="designpattern" />
-        <module name="hsmap" />
         <module name="javalang" />
         <module name="javathread" />
+        <module name="source_sf" />
       </profile>
     </annotationProcessing>
   </component>
