@@ -13,5 +13,9 @@
         <module name="source_sf" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="hsmap" target="1.8" />
+      <module name="source_sf" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,14 +1,18 @@
 package tl.BlockingQueue_self;
 
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.*;
 
 public class Test01 {
     public static void main(String[] args) {
-//        DelayQueue<String>
+
+        ArrayBlockingQueue arrayBlockingQueue;
+        LinkedBlockingQueue linkedBlockingQueue;
         PriorityBlockingQueue priorityBlockingQueue;
         DelayQueue delayQueue;
+        SynchronousQueue synchronousQueue;
 
-//        priorityBlockingQueue.add(new Object());
+
+
+
     }
 }

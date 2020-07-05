@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hsmap</artifactId>
+    <artifactId>source_sf</artifactId>
 
-    <name>hsmap</name>
+    <name>source_sf</name>
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
 
