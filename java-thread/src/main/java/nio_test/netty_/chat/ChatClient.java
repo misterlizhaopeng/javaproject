@@ -34,18 +34,17 @@ public class ChatClient {
             Channel channel = cf.channel();
             System.out.println("========" + channel.localAddress() + "========");
             //客户端需要输入信息， 创建一个扫描器
-//            Scanner scanner = new Scanner(System.in);
-//            while (scanner.hasNextLine()) {
-//                String msg = scanner.nextLine();
-//                //通过 channel 发送到服务器端
-//                channel.writeAndFlush(msg);
-//            }
-
-            for (int i = 0; i < 200; i++) {
-                channel.writeAndFlush("hello，zhangsan");
+            Scanner scanner = new Scanner(System.in);
+            while (scanner.hasNextLine()) {
+                String msg = scanner.nextLine();
+                //通过 channel 发送到服务器端
+                channel.writeAndFlush(msg);
             }
-            Thread.sleep(30000);
 
+//            for (int i = 0; i < 200; i++) {
+//                channel.writeAndFlush("hello，zhangsan");
+//            }
+//            Thread.sleep(30000);
 
         } catch (Exception ex) {
             ex.printStackTrace();
