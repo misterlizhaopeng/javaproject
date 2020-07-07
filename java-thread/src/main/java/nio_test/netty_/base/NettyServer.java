@@ -40,7 +40,7 @@ public class NettyServer {
             //启动服务器(并绑定端口)，bind是异步操作，sync方法是等待异步操作执行完毕
             ChannelFuture cf = serverBootstrap.bind(9100).sync();
 
-            //给cf注册监听器，监听我们关心的事件
+            //给cf注册监听器，监听我们关心的事件，当sync方法不被调用，可以用下面的cf的监听方法addListener()，进行监听端口是否启动成功
             /*cf.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {

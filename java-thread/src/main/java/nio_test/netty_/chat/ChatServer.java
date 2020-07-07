@@ -27,7 +27,7 @@ public class ChatServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
 
-                            //向pipeline加入解码器
+                            //向pipeline加入解码器 编解码和客户端的顺序一样，不一样都行；
                             pipeline.addLast("decoder", new StringDecoder());
                             //向pipeline加入编码器
                             pipeline.addLast("encoder", new StringEncoder());
@@ -39,7 +39,7 @@ public class ChatServer {
 
             System.out.println("聊天室 server 启动...");
             ChannelFuture cf = serverBootstrap.bind(9200).sync();
-            //关闭通道
+            //等待通道关闭
             cf.channel().closeFuture().sync();
         } catch (Exception ex) {
             ex.printStackTrace();
