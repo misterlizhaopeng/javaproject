@@ -14,6 +14,7 @@ public class MyClientHandler extends SimpleChannelInboundHandler<MyMessageProtoc
             MyMessageProtocol messageProtocol = new MyMessageProtocol();
             messageProtocol.setLen(msg.getBytes(CharsetUtil.UTF_8).length);
             messageProtocol.setContent(msg.getBytes(CharsetUtil.UTF_8));
+            //从运行结果可以看出，writeAndFlush()方法调用一次，编码执行一次
             ctx.writeAndFlush(messageProtocol);
         }
     }
