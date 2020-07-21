@@ -1,10 +1,7 @@
 package nio_test.netty_.codec;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -29,7 +26,6 @@ public class NettyClient {
 //                            pipeline.addLast(new ByteToLongDecoder());
 
 
-
                             //传对象-start
 
                             pipeline.addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.cacheDisabled(null)));
@@ -41,8 +37,8 @@ public class NettyClient {
                     });
 
             System.out.println("netty client start。。");
-            ChannelFuture channelFuture = bootstrap.connect("127.0.0.1", 9000).sync();
-            channelFuture.channel().closeFuture().sync();
+            ChannelFuture cf = bootstrap.connect("127.0.0.1", 9000).sync();
+            cf.channel().closeFuture().sync();
         } finally {
             group.shutdownGracefully();
         }

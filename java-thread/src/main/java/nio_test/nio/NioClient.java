@@ -24,7 +24,7 @@ public class NioClient {
     }
 
     /**
-     * 获得一个Socket通道，并对该通道做一些初始化的工作
+     * 创建一个选择器selector，获得一个Socket通道，并对该通道做一些初始化的工作
      *
      * @param ip   连接的服务器的ip
      * @param port 连接的服务器的端口号

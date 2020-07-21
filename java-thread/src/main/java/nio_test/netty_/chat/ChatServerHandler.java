@@ -18,7 +18,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final ConcurrentHashMap<String, ChannelHandlerContext> concurrentHashMap = new ConcurrentHashMap<>();
 
-    //表示 channel 处于就绪状态, 提示上线
+    //表示 channel 处于就绪状态, 表示客户端已上线
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
@@ -26,6 +26,8 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         //将该客户加入聊天的信息推送给其它在线的客户端
         //该方法会将 channelGroup 中所有的 channel 遍历，并发送消息
         channels.writeAndFlush("[ 客户端 ]" + channel.remoteAddress() + "上线了" + simpleDateFormat.format(new Date()));
+        // 给自己发送消息
+        //ctx.channel().writeAndFlush("[---- 客户端 ]" + channel.remoteAddress() + "上线了" + simpleDateFormat.format(new Date()));
         channels.add(channel);
         System.out.println(ctx.channel().remoteAddress() + " 上线了" + "\n");
     }
