@@ -17,6 +17,10 @@ public class NettyByteBuf {
         ByteBuf byteBuf = Unpooled.buffer(10);
         System.out.println("byteBuf:" + byteBuf);
 
+        for (int i = 0; i < 5; i++) {
+            System.out.println(byteBuf.getByte(i));
+        }
+        System.out.println("byteBuf:" + byteBuf);
         //byteBuf:UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeHeapByteBuf(ridx: 0, widx: 8, cap: 10)
         // 表示：writerIndex为写到了第八位
         for (int i = 0; i < 8; i++) {
@@ -38,7 +42,9 @@ public class NettyByteBuf {
 
         System.out.println("----------------------------------------->");
         //用Unpooled工具类创建ByteBuf
-        ByteBuf byteBuf2 = Unpooled.copiedBuffer("zhangsan", CharsetUtil.UTF_8);
+        //utf汉字编码下，每个汉字占用 3 个字节；所以字符串：zhangsan 的字节个数为24个，放到ByteBuf中，capacity的值为24；
+        ByteBuf byteBuf2 = Unpooled.copiedBuffer("zhangsan1", CharsetUtil.UTF_8);
+        //ByteBuf byteBuf2 = Unpooled.copiedBuffer("zhangsan", CharsetUtil.US_ASCII);
         if (byteBuf2.hasArray()) {
             byte[] content = byteBuf2.array();
             //将 content 转成字符串
@@ -46,11 +52,14 @@ public class NettyByteBuf {
             // byteBuf2 的容量和CharsetUtil.UTF_8存在关系
             System.out.println("byteBuf=" + byteBuf2);
 
+            //byteBuf的可读位置；
             System.out.println(byteBuf2.readerIndex()); // 0
+            //byteBuf的可写位置；
             System.out.println(byteBuf2.writerIndex()); // 8
+            //byteBuf的容量；
             System.out.println(byteBuf2.capacity()); // 24
 
-            System.out.println(byteBuf2.getByte(0));// 获取数组0这个位置的字符h的ascii码，h=122
+            System.out.println(byteBuf2.getByte(0));// 获取数组0这个位置的字符z的ascii码，h=122
 
             int len = byteBuf2.readableBytes(); //可读的字节数  8
             System.out.println("len=" + len);

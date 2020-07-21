@@ -13,4 +13,5 @@ public class MyClientMessageEncoder extends MessageToByteEncoder<MyMessageProtoc
         out.writeInt(msg.getLen());
         out.writeBytes(msg.getContent());
     }
+
 }

@@ -7,6 +7,11 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (msg instanceof MsgEachOther){
+            MsgEachOther msgo= (MsgEachOther)msg;
+            MsgContent<String> content = msgo.getContent();
+            MsgContent<User> contentU = msgo.getContent();
+        }
         //System.out.println("从客户端读取到String：" + msg.toString());
         if (msg instanceof C){
             System.out.println("从客户端读取到Object-C：" + ((C)msg).toString());
