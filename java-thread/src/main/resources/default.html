@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css">
+        .talk_con {
+            width: 600px;
+            height: 500px;
+            border: 1px solid #666;
+            margin: 50px auto 0;
+            background: #f9f9f9;
+        }
+
+        .talk_show {
+            width: 580px;
+            height: 420px;
+            border: 1px solid #666;
+            background: #fff;
+            margin: 10px auto 0;
+            overflow: auto;
+        }
+
+        .talk_input {
+            width: 580px;
+            margin: 10px auto 0;
+        }
+
+        .whotalk {
+            width: 80px;
+            height: 30px;
+            float: left;
+            outline: none;
+        }
+
+        .talk_word {
+            width: 420px;
+            height: 26px;
+            padding: 0px;
+            float: left;
+            margin-left: 10px;
+            outline: none;
+            text-indent: 10px;
+        }
+
+        .talk_sub {
+            width: 56px;
+            height: 30px;
+            float: left;
+            margin-left: 10px;
+        }
+
+        .atalk {
+            margin: 10px;
+        }
+
+        .atalk span {
+            display: inline-block;
+            background: #0181cc;
+            border-radius: 10px;
+            color: #fff;
+            padding: 5px 10px;
+        }
+
+        .btalk {
+            margin: 10px;
+            text-align: right;
+        }
+
+        .btalk span {
+            display: inline-block;
+            background: #ef8201;
+            border-radius: 10px;
+            color: #fff;
+            padding: 5px 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        var socket;
+        var wsu = "ws://localhost:8090/ws";
+        window.onload = function () {
+            var myNick = document.getElementById("nickName");
+            var Words = document.getElementById("words");
+            var Who = document.getElementById("who");
+            var TalkWords = document.getElementById("talkwords");
+            var TalkSub = document.getElementById("talksub");
+            var conEst = document.getElementById("conEst");
+            var stats = document.getElementById("stats");
+            conEst.onclick = function (ev) {
+                if (!myNick.value) {
+                    stats.innerHTML = '<span style="color:red;font-size: 12px;font-weight: bold">请输入昵称</span>';
+                    return false;
+                }
+                //websocket = new WebSocket('ws://localhost:8090/ws');
+                websocket();
+                // if (socket.readyState == WebSocket.OPEN) {
+                //     stats.innerHTML = '<span style="color:green;font-size: 12px;font-weight: bold">√认证成功</span>';
+                // }
+                // if (websocket && websocket.readyState == WebSocket.OPEN)
+                //     stats.innerHTML = '<span style="color:green;font-size: 12px;font-weight: bold">√</span>';
+                // else {
+                //     stats.innerHTML = '<span style="color:red;font-size: 12px;font-weight: bold">×</span>';
+                // }
+            }
+
+            TalkSub.onclick = function () {
+                var str, stats = document.getElementById("stats");
+                if (!socket || socket.readyState != 1) {
+                    stats.innerHTML = '<span style="color:red;font-size: 12px;font-weight: bold">请先建立连接！！</span>';
+                    return;
+                }
+                if (TalkWords.value == "") {
+                    stats.innerHTML = '<span style="color:red;font-size: 12px;font-weight: bold">消息不能为空</span>';
+                    return;
+                }
+                /*
+                if(Who.value == 0){
+                    //如果Who.value为0n那么是 A说
+                    str = '<div class="atalk"><span>A说 :' + TalkWords.value +'</span></div>';
+                }
+                else{
+                    str = '<div class="btalk"><span>B说 :' + TalkWords.value +'</span></div>' ;
+                }*/
+                //自己：右边显示
+                str = '<div class="btalk"><span>我说 :' + TalkWords.value + '</span></div>';
+                sendMessage(TalkWords.value);
+                TalkWords.value = '';
+                Words.innerHTML = Words.innerHTML + str;
+            }
+
+
+            document.querySelector('#send-pic').addEventListener('change',
+                function (ev) {
+                    if (!socket || socket.readyState != 1) {
+                        var stats = document.getElementById("stats");
+                        stats.innerHTML = '<span style="color:red;font-size: 12px;font-weight: bold">请先建立连接！！</span>';
+                        return;
+                    }
+                    var files = this.files;
+                    if (files && files.length) {
+                        var file = files[0];
+                        var _ext = file.name.split('.')[1].toLowerCase();
+                        if (_ext != 'png' && _ext != 'jpg' && _ext != 'gif') {
+                            alert('请传送图片的格式');
+                            return;
+                        }
+                        var fileReader = new FileReader();
+                        fileReader.readAsArrayBuffer(file);
+                        fileReader.onload = function (e) {
+                            // 获取到文件对象
+                            var result = e.target.result;
+                            // 发送数据到服务器端
+                            socket.send(result)
+                        }
+                    }
+                }
+
+
+                /*
+                                function (ev) {
+                                    var files = this.files;
+                                    if (files && files.length) {
+                                        var file = files[0];
+                                        var fileType = file.type;
+                                        // 表示传递的是 非图片
+                                        var dataType = 10;
+                                        if (!/^image/.test(fileType)) {
+                                            // 表示传递的是 图片
+                                            dataType = 20;
+                                            return;
+                                        }
+                                        var fileReader = new FileReader();
+                                        fileReader.readAsArrayBuffer(file);
+                                        fileReader.onload = function (e) {
+                                            // 获取到文件对象
+                                            var result = e.target.result;
+                                            // 创建一个 4个 字节的数组缓冲区
+                                            var arrayBuffer = new ArrayBuffer(4);
+                                            var dataView = new DataView(arrayBuffer);
+                                            // 从第0个字节开始，写一个 int 类型的数据(dataType)，占4个字节
+                                            dataView.setInt32(0, dataType);
+                                            // 组装成 blob 对象
+                                            var blob = new Blob([arrayBuffer, result]);
+                                            // 发送到 webSocket 服务器端
+                                            ws.send(blob);
+                                        }
+                                    }
+                                }*/
+
+
+                , true);
+
+        }
+
+        //login websocket
+        function websocket() {
+            if (!window.WebSocket) {
+                window.WebSocket = window.MozWebSocket;
+            }
+            //当前socket存在，禁止再次创建socket连接；
+            if ("undefined" != typeof (socket) && null != socket) {
+                var stats = document.getElementById("stats");
+                stats.innerHTML = '<span style="color:green;font-size: 12px;font-weight: bold">√已经认证成功</span>';
+                return;
+            }
+
+            // if (socket) {//&& socket.readyState == WebSocket.OPEN；"undefined" == typeof(socket) || null == socket
+            //     var stats = document.getElementById("stats");
+            //     stats.innerHTML = '<span style="color:green;font-size: 12px;font-weight: bold">√已经认证成功</span>';
+            //     return;
+            // }
+            if (window.WebSocket) {
+                socket = new WebSocket(wsu);
+
+                //收到服务器发送的消息
+                socket.onmessage = function (event) {
+                    if (event.data instanceof Blob) {
+                        var result = event.data;
+                        var flagReader = new FileReader();
+                        //flagReader.readAsArrayBuffer(result.slice(0, 4));
+                        flagReader.readAsArrayBuffer(result);
+                        //flagReader.onload = function (flag) {
+                        flagReader.onload = function () {
+                            //if (new DataView(flag.target.result).getInt32(0) === 10) {
+                            var imageReader = new FileReader();
+                            //imageReader.readAsDataURL(result.slice(4));
+                            imageReader.readAsDataURL(result);
+                            console.info("服务器返回的数据大小:", result.size);
+                            imageReader.onload = function (img) {
+                                var imgHtml = "<img src='" + img.target.result + "' style='width: 100px;height: 50px;align:right;'>";
+                                var Words = document.getElementById("words");
+                                var tmpImg = imgHtml.replace("data:application/octet-stream;", "data:image/png;") + "<br />";
+                                //Words.innerHTML += '<div class="atalk"><span>我 :' + tmpImg + '</span></div>';
+                                Words.innerHTML += '<div class="atalk"><span>' + tmpImg + '</span></div>';
+                            }
+                            //} else {
+                            //  alert("后端返回的是非图片类型数据，无法显示。");
+                            //}
+                        }
+
+
+                        /*
+
+                                            var result = event.data;
+                                            var flagReader = new FileReader();
+                                            flagReader.readAsArrayBuffer(result.slice(0, 4));
+                                            flagReader.onload = function (flag) {
+                                                if (new DataView(flag.target.result).getInt32(0) === 10) {
+                                                    var imageReader = new FileReader();
+                                                    imageReader.readAsDataURL(result.slice(4));
+                                                    imageReader.onload = function (img) {
+                                                        var imgHtml = "<img src='" + img.target.result + "' style='width: 100px;height: 50px;align:right;'>";
+                                                        var Words = document.getElementById("words");
+                                                        var tmpImg = imgHtml.replace("data:application/octet-stream;", "data:image/png;") + "<br />";
+                                                        Words.innerHTML += '<div class="atalk"><span>我 :' + tmpImg + '</span></div>';
+                                                    }
+                                                } else {
+                                                    alert("后端返回的是非图片类型数据，无法显示。");
+                                                }
+                                            }
+                     */
+                    } else {
+                        var data = JSON.parse(event.data);
+                        switch (data.tk) {
+                            //认证成功
+                            case 11:
+                                disabledNickName();
+                                var stats = document.getElementById("stats");
+                                stats.innerHTML = '<span style="color:green;font-size: 12px;font-weight: bold">' + data.chatMessage + '</span>';
+                                break;
+                            //存在重复昵称
+                            case 15:
+                                socket=null;
+                                //socket.close();
+
+                                var stats = document.getElementById("stats");
+                                stats.innerHTML = '<span style="color:green;font-size: 12px;font-weight: bold">' + data.chatMessage + '</span>';
+                                break;
+                            //群发-接收消息
+                            case 12:
+                                var whoSay = data.nick;
+                                var Words = document.getElementById("words");
+                                //str = '<div class="btalk"><span>' + data.chatMessage + '</span></div>';
+                                str = '<div class="atalk"><span>' + whoSay + '说 :' + data.chatMessage + '</span></div>';
+                                Words.innerHTML = Words.innerHTML + str;
+                                break;
+                            //请求总人数及其昵称信息
+                            case 13:
+                                //略-此后台完备
+                                break;
+                            //给指定人发送消息
+                            case 14:
+                                //略-此后台完备
+                                break;
+                        }
+                    }
+
+                };
+                socket.onopen = function () {
+                    //连接成功建立的回调方法
+                    //把当前人员信息注册到服务器；
+                    var object = {};
+                    var myNick = document.getElementById("nickName");
+                    object.tk = 1;
+                    object.nick = myNick.value;
+                    send(JSON.stringify(object));
+                };
+                //连接关闭的回调方法
+                socket.onclose = function () {
+                    socket.close();
+                };
+                return true;
+            } else {
+                alert("您的浏览器不支持WebSocket");
+                return false;
+            }
+        }
+
+        //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+        window.onbeforeunload = function () {
+            socket.close();
+        }
+
+        function sendMessageToUser(message, nick) {
+            if (message === "" || message == null) {
+                alert("信息不能为空~");
+                return;
+            }
+            var object = {};
+            var myNick = document.getElementById("nickName");
+            object.tk = 4;
+            object.nick = myNick.value;
+            object.toNick = nick;
+            object.chatMessage = message;
+            send(JSON.stringify(object));
+        }
+
+        function disabledNickName() {
+            document.getElementById('nickName').disabled=true
+        }
+        function sendMessage(message) {
+            if (!message) {
+                //alert("信息不能为空~");
+                var stats = document.getElementById("stats");
+                stats.innerHTML = '<span style="color:red;font-size: 12px;font-weight: bold">信息不能为空</span>';
+                return;
+            }
+            var object = {};
+            var myNick = document.getElementById("nickName");
+            object.tk = 2;
+            object.nick = myNick.value;
+            object.chatMessage = message;
+            send(JSON.stringify(object));
+        }
+
+        function send(message) {
+            if (!window.WebSocket) {
+                return;
+            }
+            if (!socket || socket.readyState != 1) {
+                var stats = document.getElementById("stats");
+                stats.innerHTML = '<span style="color:red;font-size: 12px;font-weight: bold">请先建立连接！！</span>';
+                return;
+            }
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(message);
+            }
+        }
+
+        // 发送图片
+        //document.querySelector('#send-pic').addEventListener('change',function (evt) { alert(1210); },true);
+        //}, false);
+
+    </script>
+</head>
+<body>
+<!--<div class="talk_con" style="border: 1px solid #CCC;height: 300px;overflow: scroll" id="server-msg-container"></div>-->
+
+<div class="talk_con">
+    昵称：<input type="text" size="30" id="nickName">
+    <input type="button" value="建立连接" id="conEst"><span id="stats"></span>
+    <br/>
+    <div class="talk_show" id="words">
+        <!--<div class="atalk"><span id="asay">A说：吃饭了吗？</span></div>-->
+        <!--<div class="btalk"><span id="bsay">B说：还没呢，你呢？</span></div>-->
+    </div>
+
+    <div class="talk_input">
+        <!--   <select class="whotalk" id="who">
+               &lt;!&ndash;获取所有的客户&ndash;&gt;
+               <option value="0">A</option>
+               <option value="1">B</option>
+           </select>-->
+
+        <input type="file" id="send-pic" style="size:1px">
+        <input type="text" class="talk_word" id="talkwords">
+        <input type="button" value="发送" class="talk_sub" id="talksub">
+    </div>
+
+</div>
+</body>
+</html>

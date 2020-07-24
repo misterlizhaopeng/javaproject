@@ -43,7 +43,7 @@ public class NettyByteBuf {
         System.out.println("----------------------------------------->");
         //用Unpooled工具类创建ByteBuf
         //utf汉字编码下，每个汉字占用 3 个字节；所以字符串：zhangsan 的字节个数为24个，放到ByteBuf中，capacity的值为24；
-        ByteBuf byteBuf2 = Unpooled.copiedBuffer("zhangsan1", CharsetUtil.UTF_8);
+        ByteBuf byteBuf2 = Unpooled.copiedBuffer("zhangsan", CharsetUtil.UTF_8);
         //ByteBuf byteBuf2 = Unpooled.copiedBuffer("zhangsan", CharsetUtil.US_ASCII);
         if (byteBuf2.hasArray()) {
             byte[] content = byteBuf2.array();
@@ -69,7 +69,7 @@ public class NettyByteBuf {
             for (int i = 0; i < len; i++) {
                 System.out.println((char) byteBuf2.getByte(i));
             }
-            //范围读取
+            //范围读取，这样获取数据不会影响readerIndex的位置；
             System.out.println(byteBuf2.getCharSequence(0, 6, CharsetUtil.UTF_8));
             System.out.println(byteBuf2.getCharSequence(6, 2, CharsetUtil.UTF_8));
 
