@@ -9,6 +9,7 @@ public class Sync02 {
      * synchronized
      * 修饰代码块：写法：大括号括起来的代码，作用与调用的对象
      * 修饰方法：写法：整个方法，作用与调用的对象
+
      * 修饰静态方法：写法：整个静态方法，作用于所有对象
      * 修饰类：写法：括号括起来的部分，作用于所有对象
      */
@@ -23,7 +24,7 @@ public class Sync02 {
 
     // 修饰一个静态方法
     public synchronized static void test2(int j) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             System.out.println("test2 j=" + j + ",i=" + i);
         }
     }

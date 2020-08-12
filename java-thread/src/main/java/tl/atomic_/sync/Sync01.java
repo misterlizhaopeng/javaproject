@@ -23,7 +23,7 @@ public class Sync01 {
 
     // 修饰一个方法
     public synchronized void test2(int j) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             System.out.println("test2 j=" + j + ",i=" + i);
         }
     }
@@ -49,7 +49,7 @@ public class Sync01 {
         // 同一个对象调用加锁方法：顺序执行 测试-end
 
 
-        // 不同一个对象调用加锁方法：交替执行 测试-start
+        // 不同对象调用加锁方法：交替执行 测试-start
 
             //通过线程池 创建一个线程，执行任务
             executorService.execute(() -> {
@@ -61,7 +61,7 @@ public class Sync01 {
                 example2.test2(2);
             });
 
-        // 不同一个对象调用加锁方法：交替执行 测试-end
+        // 不同对象调用加锁方法：交替执行 测试-end
         executorService.shutdown();
     }
 
