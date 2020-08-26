@@ -94,7 +94,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
 
     /**
      * ReentrantLock锁同步操作的基础类,继承自AQS框架.
-     * 该类有两个继承类，1、NonfairSync 非公平锁，2、FairSync公平锁
+     * 该类有两个继承类，1、NonfairSync 非公平锁，2、FairSync 公平锁
      */
         abstract static class Sync extends AbstractQueuedSynchronizer {
         private static final long serialVersionUID = -5179523762034025860L;

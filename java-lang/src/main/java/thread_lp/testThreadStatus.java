@@ -1,6 +1,7 @@
 package thread_lp;
 
 import java.util.Scanner;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class testThreadStatus {
     public static void main(String[] args) {
@@ -29,6 +30,7 @@ public class testThreadStatus {
 
         System.out.println(scanner.next());//输出此处，执行下面T2线程(该线程的状态将会为：java.lang.Object@1b7bbeb7上的WAITING)
         new Thread(new Runnable() {
+
             @Override
             public void run() {
                 synchronized (obj) {
