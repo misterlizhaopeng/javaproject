@@ -38,20 +38,19 @@ public class NioClient {
         // 获得一个通道管理器
         this.selector = Selector.open();
 
-        // 客户端连接服务器,其实方法执行并没有实现连接，需要在listen（）方法中调
-        //用channel.finishConnect() 才能完成连接
+        // 客户端连接服务器,其实方法执行并没有实现连接，需要在 listen()  方法中调用 channel.finishConnect() 才能完成连接
         channel.connect(new InetSocketAddress(ip, port));
         //将通道管理器和该通道绑定，并为该通道注册SelectionKey.OP_CONNECT事件。
         channel.register(selector, SelectionKey.OP_CONNECT);
-
     }
 
     /**
-     * 采用轮询的方式监听selector上是否有需要处理的事件，如果有，则进行处理
+     * 采用 [轮询] 的方式监听selector上是否有需要处理的事件，如果有，则进行处理
      *
      * @throws IOException
      */
     public void connect() throws IOException {
+        //while(true) 表示当前线程 一直处于执行状态
         // 轮询访问selector
         while (true) {
             selector.select();
@@ -70,11 +69,12 @@ public class NioClient {
                     }
                     // 设置成非阻塞
                     channel.configureBlocking(false);
-                    //在这里可以给服务端发送信息哦
+                    //给服务端发送信息
                     ByteBuffer buffer = ByteBuffer.wrap("HelloServer".getBytes());
                     channel.write(buffer);
-                    //在和服务端连接成功之后，为了可以接收到服务端的信息，需要给通道设置读的权限。
-                    channel.register(this.selector, SelectionKey.OP_READ);                                            // 获得了可读的事件
+                    //在和服务端连接成功之后，为了可以接收到服务端的信息，需要给通道设置读的事件
+                    // 获得了可读的事件
+                    channel.register(this.selector, SelectionKey.OP_READ);
                 } else if (key.isReadable()) {
                     read(key);
                 }
