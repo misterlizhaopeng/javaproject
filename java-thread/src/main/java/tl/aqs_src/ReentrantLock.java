@@ -181,6 +181,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
 
         /**
          * Reconstitutes the instance from a stream (that is, deserializes it).
+         * 从流中重建实例（即，反序列化它）
          */
         private void readObject(java.io.ObjectInputStream s)
                 throws java.io.IOException, ClassNotFoundException {
@@ -240,8 +241,13 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             if (c == 0) {
                 /**
                  * 与非公平锁中的区别，需要先判断队列当中是否有等待的节点
-                 * 如果没有则可以尝试CAS获取锁
+                 * 如果没有则可以尝试cas获取锁
+                 * 设置加锁的独占线程为当前线程
                  */
+                //self 总结：
+                // hasQueuedPredecessors()  判断队列中是否存在排队的线程，如果没有，则cas加锁操作
+                // compareAndSetState(0, acquires) 为cas更改锁对象的state状态0 -> 1
+                // setExclusiveOwnerThread(current) 设置加锁的独占线程为当前线程
                 if (!hasQueuedPredecessors() &&
                         compareAndSetState(0, acquires)) {
                     //独占线程指向当前线程
@@ -250,6 +256,10 @@ public class ReentrantLock implements Lock, java.io.Serializable {
                 }
             }
             else if (current == getExclusiveOwnerThread()) {
+                //解释锁重入性的地方：
+                //当前持有锁的线程重入的代码的地方，重入一次，state 加 1一次，然后返回true即可，然后；
+                //值得注意的是：如果该锁被获取了n次，那么前(n-1)次tryRelease(int releases)方法必须返回false，而只有同步状态完全释放了，才能返回true。可以看到，该方法将同步状态是否为0作为最终释放的条
+                //件，当同步状态为0时，将占有线程设置为null，并返回true，表示释放成功。
                 int nextc = c + acquires;
                 if (nextc < 0)
                     throw new Error("Maximum lock count exceeded");

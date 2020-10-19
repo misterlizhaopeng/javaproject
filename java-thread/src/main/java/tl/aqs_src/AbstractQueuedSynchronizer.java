@@ -256,12 +256,12 @@ public abstract class AbstractQueuedSynchronizer
             if (t == null) { // Must initialize
                 //队列为空需要初始化，创建空的头节点
                 if (compareAndSetHead(new Node()))
-                    tail = head;
+                    tail = head;//
             } else {
-                node.prev = t;
+                node.prev = t;//新节点的前节点指向尾节点
                 //set尾部节点
-                if (compareAndSetTail(t, node)) {//当前节点置为尾部
-                    t.next = node; //前驱节点的next指针指向当前节点
+                if (compareAndSetTail(t, node)) {//当前节点置为尾部 把当前节点设置为尾节点
+                    t.next = node; //前驱节点的next指针指向当前节点  原来的尾节点的next指针指向新的节点，形成双向链表，和addWaiter方法尾结点不为空的入队思路完全一样；
                     return t;
                 }
             }
@@ -274,21 +274,21 @@ public abstract class AbstractQueuedSynchronizer
      * @param mode Node.EXCLUSIVE for exclusive, Node.SHARED for shared
      * @return the new node
      */
+    //目的：当前线程节点入队
     private Node addWaiter(Node mode) {
-        // 1. 将当前线程构建成Node类型
+        // 将当前线程构建成Node类型
         Node node = new Node(Thread.currentThread(), mode);
-        // Try the fast path of enq; backup to full enq on failure
+        //尾结点
         Node pred = tail;
-        // 2. 1当前尾节点是否为null？
         if (pred != null) {
-            // 2.2 将当前节点尾插入的方式
-            node.prev = pred;
-            // 2.3 CAS将节点插入同步队列的尾部
-            if (compareAndSetTail(pred, node)) {
+            //表示当前尾结点不为空
+            node.prev = pred; //新节点的前指针指向尾指针指向的节点；
+            if (compareAndSetTail(pred, node)) {// 将尾指针指向新的节点；
                 pred.next = node;
                 return node;
             }
         }
+        //如果尾节点为空：入队分两步：1，初始化一个空节点，head 指向该节点；2，把当前节点node放到head指向的节点的后一个节点
         enq(node);
         return node;
     }
@@ -302,7 +302,7 @@ public abstract class AbstractQueuedSynchronizer
      */
     private void setHead(Node node) {
         head = node;
-        node.thread = null;
+        node.thread = null;//把当前节点的线程要设置null
         node.prev = null;
     }
 
@@ -505,16 +505,23 @@ public abstract class AbstractQueuedSynchronizer
         boolean failed = true;
         try {
             boolean interrupted = false;
-            for (;;) {//死循环
-                final Node p = node.predecessor();//找到当前结点的前驱结点
-                if (p == head && tryAcquire(arg)) {//如果前驱结点是头结点，才tryAcquire，其他结点是没有机会tryAcquire的。
+            for (;;) {
+                //找到当前节点的上一个节点
+                final Node p = node.predecessor();
+                //如果前驱节点为head节点，才尝试获获取锁，其他的节点没有机会尝试获取锁；
+                if (p == head && tryAcquire(arg)) {
+                    //代码执行到这里之后，表示获取了同步状态，将当前节点设置为头结点
                     setHead(node);//获取同步状态成功，将当前结点设置为头结点。
-                    p.next = null; // help GC
+                    p.next = null; // help GC ,把指向当前节点的前直接点和当前节点断开，让 JVM 快速回收当前节点的前直接点
                     failed = false;
                     return interrupted;
+                    /*
+                            ReentrantLock 链表对象：
+                            head -> [pre=null,t=null,next=null]  <-> [pre=~head,t=t1,next=t2]  <->  [pre=~t1,t=t2,next=null] <- tail
+                    */
                 }
                 /**
-                 * 如果前驱节点不是Head，通过shouldParkAfterFailedAcquire判断是否应该阻塞
+                 * 如果前驱节点不是Head，通过shouldParkAfterFailedAcquire 判断是否应该阻塞
                  * 前驱节点信号量为-1，当前线程可以安全被parkAndCheckInterrupt用来阻塞线程
                  */
                 if (shouldParkAfterFailedAcquire(p, node) &&
@@ -823,6 +830,7 @@ public abstract class AbstractQueuedSynchronizer
      *        {@link #tryAcquire} but is otherwise uninterpreted and
      *        can represent anything you like.
      */
+    // addWaiter(Node.EXCLUSIVE)返回当前线程的节点node， 表示要把当前线程封装为node节点入队，可以看做尝试获取锁失败之后，acquireQueued(node,1);
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
                 acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
@@ -1080,6 +1088,7 @@ public abstract class AbstractQueuedSynchronizer
         Node t = tail; // Read fields in reverse initialization order
         Node h = head;
         Node s;
+        //h != t ,如果返回false，说明 h 和 t 是相等的；说明此时当前线程不需要排队
         return h != t &&
                 ((s = h.next) == null || s.thread != Thread.currentThread());
     }

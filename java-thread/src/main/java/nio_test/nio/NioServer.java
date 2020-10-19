@@ -24,6 +24,7 @@ public class NioServer {
         // 把ServerSocketChannel注册到selector上，并且selector对客户端accept连接操作感兴趣
         ssc.register(selector, SelectionKey.OP_ACCEPT);
 
+        //while(true)：表示让当前线程一直处于执行的状态
         while (true) {
             System.out.println("等待事件发生。。");
             // 轮询监听channel里的key，select是阻塞的，accept()也是阻塞的
