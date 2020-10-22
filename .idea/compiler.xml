@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Algorithm" />
         <module name="designpattern" />
+        <module name="java-rpc" />
         <module name="javalang" />
         <module name="javathread" />
         <module name="source_sf" />

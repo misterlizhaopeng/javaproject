@@ -15,6 +15,7 @@
         <module>source_sf</module>
         <module>Algorithm</module>
         <module>source_sf</module>
+        <module>java-rpc</module>
     </modules>
 
 </project>
