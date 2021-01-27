@@ -465,8 +465,8 @@ public abstract class AbstractQueuedSynchronizer
             pred.next = node;
         } else {
             /*
-             * 当前驱节点waitStatus为 0 or PROPAGATE状态时
-             * 将其设置为SIGNAL状态，然后当前结点才可以可以被安全地park
+             * 当前驱节点waitStatus为 0 or PROPAGATE 状态时
+             * 将其设置为SIGNAL状态，然后当前结点才可以被安全地park
              */
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }

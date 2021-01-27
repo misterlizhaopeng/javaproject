@@ -12,6 +12,7 @@
         <module name="javalang" />
         <module name="javathread" />
         <module name="source_sf" />
+        <module name="TestHW" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
