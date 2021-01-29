@@ -1,4 +1,5 @@
 import javax.print.DocFlavor;
+import java.util.List;
 
 /**
  * @ClassName PACKAGE_NAME.TestObj
@@ -11,6 +12,15 @@ import javax.print.DocFlavor;
 public class TestObj {
     private Integer id;
     private String  name;
+    private List<TestObj> to;
+
+    public List<TestObj> getTo() {
+        return to;
+    }
+
+    public void setTo(List<TestObj> to) {
+        this.to = to;
+    }
 
     public Integer getId() {
         return id;
