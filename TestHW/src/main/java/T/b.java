@@ -9,4 +9,3 @@ package T;
  **/
 public class b {
 }
-
