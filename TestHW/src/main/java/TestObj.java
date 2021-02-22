@@ -37,5 +37,14 @@ public class TestObj {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "TestObj{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", to=" + to +
+                '}';
+    }
 }
 
