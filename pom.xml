@@ -17,6 +17,9 @@
         <module>source_sf</module>
         <module>java-rpc</module>
         <module>TestHW</module>
+        <module>DynamicProxy_</module>
+        <module>javaSpi</module>
+        <module>dubboSpi</module>
     </modules>
 
 </project>

@@ -40,9 +40,15 @@ public class Main {
 //        });//sort ok
 
 
+
+
         BigDecimal big1 = new BigDecimal(10);
 
         BigDecimal big2 = new BigDecimal(11.79000000000000003);
+
+
+
+
         big1 = big1.add(big2).setScale(2,BigDecimal.ROUND_HALF_UP);
         //big1.compareTo(big2)
         System.out.println(big1);

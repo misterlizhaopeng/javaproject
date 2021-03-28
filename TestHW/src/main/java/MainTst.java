@@ -11,6 +11,15 @@ public class MainTst {
 
     public static void main(String[] args) {
 
+        System.out.println("aaa");
+
+
+
+        SubObj subObj = new SubObj();
+//        String obj = subObj.obj();
+//        System.out.println("obj=" + obj);
+
+
     }
 
 
@@ -18,7 +27,7 @@ public class MainTst {
 
     @Test
     public void testA() {
-        TestObj tt=new TestObj();
+        TestObj tt = new TestObj();
         tt.setId(1);
         tt.setName("xyz");
         System.out.println(tt.toString());
