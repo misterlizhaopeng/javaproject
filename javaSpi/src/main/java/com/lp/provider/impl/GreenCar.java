@@ -1,4 +1,4 @@
-package com.lp.impl;
+package com.lp.provider.impl;
 
 import com.lp.interface_.Car;
 
@@ -9,8 +9,8 @@ import com.lp.interface_.Car;
  * @Date 2021/3/28 14:59
  * @Version 1.0
  **/
-public class RedCar implements Car {
-    public RedCar(){
+public class GreenCar implements Car {
+    public GreenCar() {
         //System.out.println(this.getClass().getName());
     }
 }

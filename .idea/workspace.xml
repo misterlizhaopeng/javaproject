@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2bc5c758-ebf3-425c-8307-bc07a6bd838e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/dubbo/com.lp.inter.IA" afterDir="false" />
+    <list default="true" id="2bc5c758-ebf3-425c-8307-bc07a6bd838e" name="Default Changelist" comment="微信抢红包-红包拆分方法">
+      <change afterPath="$PROJECT_DIR$/dubboSpi/src/main/resources/logging.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/consumer/Consumer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/ChannelHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/DispatcherHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/Invocation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/NettyServer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/NettyServerHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/RequestHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/Task.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/ActionStarter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/impl/HelloServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/service/HelloService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/proxy/ProxyFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/tools/LocalRegister.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/tools/URL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dubboSpi/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dubboSpi/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/DubboMainPortal.java" beforeDir="false" afterPath="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/DubboMainPortal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IAImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/provider/impl/IAImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IBImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/provider/impl/IBImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/dubbo/com.lp.inter.IA" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/javaSpi/src/main/java/com/lp/impl/GreenCar.java" beforeDir="false" afterPath="$PROJECT_DIR$/javaSpi/src/main/java/com/lp/provider/impl/GreenCar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/javaSpi/src/main/java/com/lp/impl/RedCar.java" beforeDir="false" afterPath="$PROJECT_DIR$/javaSpi/src/main/java/com/lp/provider/impl/RedCar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/javaSpi/src/main/resources/META-INF/services/com.lp.interface_.Car" beforeDir="false" afterPath="$PROJECT_DIR$/javaSpi/src/main/resources/META-INF/services/com.lp.interface_.Car" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/design-pattern/target/" />
@@ -17,6 +42,7 @@
     <ignored path="$PROJECT_DIR$/DynamicProxy_/target/" />
     <ignored path="$PROJECT_DIR$/javaSpi/target/" />
     <ignored path="$PROJECT_DIR$/dubboSpi/target/" />
+    <ignored path="$PROJECT_DIR$/my-rpc/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,75 +70,123 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/DubboMainPortal.java">
+        <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/tools/URL.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="16" column="52" lean-forward="true" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
+            <state relative-caret-position="338">
+              <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/NettyServer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="235">
+              <caret line="36" column="58" lean-forward="true" selection-start-line="36" selection-start-column="58" selection-end-line="36" selection-end-column="58" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1089#1801#0" expanded="true" />
+                <element signature="e#1800#1801#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/inter/IA.java">
+        <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/ActionStarter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+            <state relative-caret-position="207">
+              <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/dubbo/com.lp.inter.IA">
+        <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/proxy/ProxyFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13">
-              <caret line="1" column="22" lean-forward="true" selection-start-line="1" selection-start-column="22" selection-end-line="1" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.5.3/dubbo-2.5.3-sources.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="613" column="71" selection-start-line="613" selection-start-column="71" selection-end-line="613" selection-end-column="71" />
+            <state relative-caret-position="312">
+              <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2625#2655#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IAImpl.java">
+        <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/consumer/Consumer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="13" column="13" lean-forward="true" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+            <state relative-caret-position="247">
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
               <folding>
-                <element signature="e#236#237#0" expanded="true" />
-                <element signature="e#261#262#0" expanded="true" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IBImpl.java">
+        <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/Invocation.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="234">
+              <caret line="30" column="43" lean-forward="true" selection-start-line="30" selection-start-column="43" selection-end-line="30" selection-end-column="43" />
+              <folding>
+                <element signature="e#482#483#0" expanded="true" />
+                <element signature="e#518#519#0" expanded="true" />
+                <element signature="e#576#577#0" expanded="true" />
+                <element signature="e#626#627#0" expanded="true" />
+                <element signature="e#663#664#0" expanded="true" />
+                <element signature="e#696#697#0" expanded="true" />
+                <element signature="e#748#749#0" expanded="true" />
+                <element signature="e#792#793#0" expanded="true" />
+                <element signature="e#830#831#0" expanded="true" />
+                <element signature="e#863#864#0" expanded="true" />
+                <element signature="e#916#917#0" expanded="true" />
+                <element signature="e#960#961#0" expanded="true" />
+                <element signature="e#995#996#0" expanded="true" />
+                <element signature="e#1024#1025#0" expanded="true" />
+                <element signature="e#1070#1071#0" expanded="true" />
+                <element signature="e#1106#1107#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/CliSocket.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="182">
+              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/EnumBaseProduct.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="143">
-              <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/services/com.lp.inter.IA">
+        <entry file="file://$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/SerSocket.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13">
-              <caret line="1" column="22" lean-forward="true" selection-start-line="1" selection-start-column="22" selection-end-line="1" selection-end-column="22" />
+            <state relative-caret-position="188">
+              <caret line="35" column="42" lean-forward="true" selection-start-line="35" selection-start-column="42" selection-end-line="35" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/impl/HelloServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
             </state>
           </provider>
         </entry>
@@ -124,17 +198,13 @@
       <list>
         <option value="Enum" />
         <option value="Interface" />
+        <option value="HTML File" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>通过线程池，实现并发任务，然后对每一个任务进行接收返回值操作</find>
-      <find>ThreadPoolExecutor</find>
-      <find>newScheduledThreadPool</find>
-      <find>AbstractOwnableSynchronizer</find>
-      <find>FairSync</find>
       <find>AbstractQueuedSynchronizer</find>
       <find>headOffset</find>
       <find>CopyOnWriteArrayList</find>
@@ -160,6 +230,11 @@
       <find>ih</find>
       <find>l1</find>
       <find>ia1</find>
+      <find>type</find>
+      <find>setLoggerAdapter</find>
+      <find>objectFactory</find>
+      <find>cachedAdaptiveClass</find>
+      <find>classLoader</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -176,25 +251,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/CliSocket.java" />
-        <option value="$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/SerSocket.java" />
-        <option value="$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/EnumBaseProduct.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/T/b.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/DeadCycle.java" />
-        <option value="$PROJECT_DIR$/java-lang/src/main/java/thread_lp/testThreadStatus.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/TestObj.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/Tst1.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/BigDecimalTst02.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/Main.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/BigDecimalTst.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/ParamentObj.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/SumObj.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/MainTst.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/ParentObj.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/SubObj.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/T/Baseclass.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/T/Extendclass.java" />
-        <option value="$PROJECT_DIR$/TestHW/src/main/java/T/Tst.java" />
         <option value="$PROJECT_DIR$/java-lang/src/main/java/tf/TstFinal.java" />
         <option value="$PROJECT_DIR$/java-lang/src/main/java/fs.java" />
         <option value="$PROJECT_DIR$/java-lang/src/main/java/fs/fs.java" />
@@ -219,14 +275,33 @@
         <option value="$PROJECT_DIR$/javaSpi/src/main/resources/META-INF/services/com.lp.interface_.Car" />
         <option value="$PROJECT_DIR$/javaSpi/src/main/java/com/lp/interface_impl/GreenCar.java" />
         <option value="$PROJECT_DIR$/javaSpi/src/main/java/com/lp/interface_impl/RedCar.java" />
-        <option value="$PROJECT_DIR$/dubboSpi/pom.xml" />
         <option value="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/IAImpl.java" />
         <option value="$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/dubbo/com.lp.inter.IA" />
-        <option value="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/inter/IA.java" />
         <option value="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IAImpl.java" />
         <option value="$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/services/com.lp.inter.IA" />
-        <option value="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/DubboMainPortal.java" />
         <option value="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IBImpl.java" />
+        <option value="$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/dubbo/AAC.html" />
+        <option value="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/inter/IA.java" />
+        <option value="$PROJECT_DIR$/dubboSpi/pom.xml" />
+        <option value="$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/DubboMainPortal.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/server/service/HelloService.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/service/HelloService.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/impl/HelloServiceImpl.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/tools/LocalRegister.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/tools/URL.java" />
+        <option value="$PROJECT_DIR$/my-rpc/pom.xml" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/NettyServer.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/ChannelHandler.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/DispatcherHandler.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/RequestHandler.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/Task.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/NettyServerHandler.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/ActionStarter.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/ActionStarter.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/Invocation.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/proxy/ProxyObject.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/consumer/Consumer.java" />
+        <option value="$PROJECT_DIR$/my-rpc/src/main/java/com/lp/proxy/ProxyFactory.java" />
       </list>
     </option>
   </component>
@@ -248,6 +323,15 @@
       <expand>
         <path>
           <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="java-rpc" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="java-rpc" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
           <item name="java-thread" type="9519ce18:MavenProjectsStructure$ProjectNode" />
         </path>
         <path>
@@ -259,7 +343,7 @@
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="40" />
     <option name="y" value="31" />
     <option name="width" value="852" />
@@ -273,6 +357,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -283,146 +369,62 @@
             <path>
               <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
               <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
+              <item name="my-rpc" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
               <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
+              <item name="my-rpc" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
               <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
+              <item name="my-rpc" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
               <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
+              <item name="my-rpc" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="lp" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
               <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
+              <item name="my-rpc" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="lp" type="462c0819:PsiDirectoryNode" />
-              <item name="impl" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
               <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
+              <item name="my-rpc" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="lp" type="462c0819:PsiDirectoryNode" />
-              <item name="inter" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="META-INF" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="META-INF" type="462c0819:PsiDirectoryNode" />
-              <item name="dubbo" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="javaproject" type="462c0819:PsiDirectoryNode" />
-              <item name="dubboSpi" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="rt_debug.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="rt_debug.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="rt_debug.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="sql" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="javaproject" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; 1.8 &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="rt_debug.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="sql" type="462c0819:PsiDirectoryNode" />
-              <item name="DriverManager" type="1a9f42e2:ClassTreeNode" />
+              <item name="proxy" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
     <property name="UI_DESIGNER_EDITOR_MODE.CaptureAnalysis.WIDTH" value="337" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1616937351047" />
-    <property name="last_opened_file_path" value="$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.5.3/dubbo-2.5.3-sources.jar!/" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1617624240706" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../dubbo_exer/rpc" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -430,36 +432,36 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\services" />
-      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\dubbo" />
-      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\" />
-      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\services" />
-      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\java-thread\src\main\resources\js" />
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="nio_test.netty_.codec" />
+      <recent name="nio_test.netty_.chat" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\my-rpc\src\main\java\com\lp\netty_self" />
       <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\dubbo" />
       <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\DynamicProxy_\src\main\java\test" />
       <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\java-thread\src\main\resources" />
       <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\java-thread\src\main\java\nio_test\netty_\hpchat" />
-      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\java-thread\src\main\java\nio_test\netty_\directbuffer" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.lp.netty_self" />
       <recent name="com.lp.impl" />
       <recent name="com.lp.interface_impl" />
       <recent name="" />
       <recent name="com.lp" />
-      <recent name="nio_test.netty_.hpchat.pojo" />
     </key>
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="nio_test.netty_.codec" />
-      <recent name="nio_test.netty_.chat" />
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\services" />
+      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\dubbo.internal" />
+      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\dubbo" />
+      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\META-INF\" />
+      <recent name="F:\hhhhhhhhhhhhhhhhhhhhhhhhhhhh\java\javaproject\dubboSpi\src\main\resources\services" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -479,13 +481,39 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.DubboMainPortal">
+  <component name="RunManager" selected="Application.Consumer">
+    <configuration name="ActionStarter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.lp.provider.ActionStarter" />
+      <module name="myrpc" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.lp.provider.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Consumer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.lp.consumer.Consumer" />
+      <module name="myrpc" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.lp.consumer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="DubboMainPortal" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.lp.DubboMainPortal" />
       <module name="dubboSpi" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.lp.*" />
+          <option name="PATTERN" value="com.lp.provider.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -519,46 +547,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SelfListFilter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="list_.SelfListFilter" />
-      <module name="javalang" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="list_.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="TstFs" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="fs.TstFs" />
-      <module name="javalang" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="fs.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
-      <item itemvalue="Application.TstFs" />
-      <item itemvalue="Application.SelfListFilter" />
       <item itemvalue="Application.NonStopMachine" />
       <item itemvalue="Application.JavaSPIPort" />
       <item itemvalue="Application.DubboMainPortal" />
+      <item itemvalue="Application.ActionStarter" />
+      <item itemvalue="Application.Consumer" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Consumer" />
+        <item itemvalue="Application.ActionStarter" />
         <item itemvalue="Application.DubboMainPortal" />
         <item itemvalue="Application.JavaSPIPort" />
         <item itemvalue="Application.NonStopMachine" />
-        <item itemvalue="Application.SelfListFilter" />
-        <item itemvalue="Application.TstFs" />
       </list>
     </recent_temporary>
   </component>
@@ -656,6 +658,8 @@
       <workItem from="1615354114412" duration="3257000" />
       <workItem from="1615795263886" duration="15144000" />
       <workItem from="1616375728704" duration="23066000" />
+      <workItem from="1616937723733" duration="260000" />
+      <workItem from="1617428108793" duration="21863000" />
     </task>
     <task id="LOCAL-00001" summary="初始化java项目：增加module： 多线程 java-thread/设计模式 design-pattern">
       <created>1587882445161</created>
@@ -938,7 +942,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="679187000" />
+    <option name="totallyTimeSpent" value="701310000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -953,29 +957,29 @@
     <frame x="-4" y="-4" width="1374" height="748" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49747476" visible="true" weight="0.31193355" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49747476" visible="true" weight="0.24924472" />
       <window_info id="Designer" order="1" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Capture Tool" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Favorites" order="5" side_tool="true" />
-      <window_info anchor="bottom" id="Spring" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.23650794" />
-      <window_info anchor="bottom" x="179" y="416" width="1878" height="220" id="Debug" order="2" sideWeight="0.49773413" weight="0.2809524" />
+      <window_info anchor="bottom" x="179" y="416" width="1878" height="220" id="Debug" order="2" sideWeight="0.49773413" weight="0.26190478" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="5" weight="0.53809524" />
-      <window_info anchor="bottom" id="Terminal" order="6" weight="0.24920635" />
+      <window_info anchor="bottom" id="Terminal" order="6" weight="0.37619048" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5022659" side_tool="true" weight="0.30476192" />
       <window_info anchor="bottom" id="Messages" order="9" sideWeight="0.49946752" weight="0.31904763" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
       <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.49924472" weight="0.35555556" />
       <window_info anchor="bottom" id="REST Client" order="12" visible="true" weight="0.43333334" />
-      <window_info anchor="bottom" x="174" y="379" width="1324" height="181" id="Run" order="13" sideWeight="0.4978701" weight="0.30952382" />
+      <window_info active="true" anchor="bottom" x="174" y="379" width="1324" height="181" id="Run" order="13" sideWeight="0.4978701" visible="true" weight="0.30952382" />
+      <window_info anchor="bottom" id="Spring" order="14" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Structure" order="1" sideWeight="0.50252527" weight="0.22507553" />
+      <window_info anchor="right" id="Structure" order="1" sideWeight="0.50252527" weight="0.18806647" />
       <window_info anchor="right" id="Maven" order="2" weight="0.32930514" />
       <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
@@ -1068,6 +1072,30 @@
           <properties />
           <option name="timeStamp" value="50" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/DubboMainPortal.java</url>
+          <line>19</line>
+          <properties />
+          <option name="timeStamp" value="53" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.class</url>
+          <line>68</line>
+          <properties />
+          <option name="timeStamp" value="54" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.class</url>
+          <line>59</line>
+          <properties />
+          <option name="timeStamp" value="56" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/consumer/Consumer.java</url>
+          <line>16</line>
+          <properties />
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/java-thread/src/main/java/tl/aqs_src/ReentrantLock.java</url>
           <line>177</line>
@@ -1124,6 +1152,36 @@
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
+        <expression-string>LocalRegister.get(&quot;com.lp.provider.service.HelloService&quot;) == null</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>LocalRegister.get(&quot;com.lp.provider.service.HelloServices&quot;) == null</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>LocalRegister.get(&quot;com.lp.provider.service.HelloServices&quot;) != null</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>LocalRegister.get(&quot;com.lp.provider.service.HelloService&quot;) != null</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>LocalRegister.get(&quot;com.lp.provider.service.HelloService&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>LocalRegister.get(HelloService.class.getName())</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
         <expression-string>l1.stream().filter(l1 -&gt;Objects.equals(l1.getId(),l2))</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
@@ -1138,314 +1196,13 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>clazz.getMethods()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>clazz</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>clazz.getInterfaces()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>clazz.getInterfaces()==null</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>list3</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>list2</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>list</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/TestHW/src/main/java/BigDecimalTst02.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="9" column="30" lean-forward="true" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TestHW/src/main/java/T/Baseclass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="11" column="5" lean-forward="true" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TestHW/src/main/java/T/Extendclass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TestHW/src/main/java/T/Tst.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="16" column="65" selection-start-line="16" selection-start-column="65" selection-end-line="16" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/fs.java" />
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/pojo/TstPO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="16" column="28" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/pojo/TstActSub.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="9" column="45" lean-forward="true" selection-start-line="9" selection-start-column="45" selection-end-line="9" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.18/lombok-1.18.18.jar!/lombok/extern/slf4j/Slf4j.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="14" column="18" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/tf/TstFinal.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="27" selection-start-line="27" selection-end-line="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/test_lp/TestGc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="11" column="55" lean-forward="true" selection-start-line="11" selection-start-column="55" selection-end-line="11" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/lang/reflect/Method.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="492" column="9" lean-forward="true" selection-start-line="492" selection-start-column="9" selection-end-line="492" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/interface_/Action.java" />
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/interface_/LpAction.java" />
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/MapperProxy.java" />
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/ObjectInterfaceProxy.java" />
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/lang/reflect/InvocationHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="40" column="17" selection-start-line="40" selection-start-column="17" selection-end-line="40" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/pojo/TstAct.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="13" column="4" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/pojo/TstActParent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="52">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/lang/reflect/Proxy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="718" column="52" selection-start-line="718" selection-start-column="52" selection-end-line="718" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DynamicProxy_/src/main/java/test/ObjectInterfaceProxy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="20" column="54" selection-start-line="20" selection-start-column="54" selection-end-line="20" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DynamicProxy_/src/main/java/test/MapperProxy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="13" column="72" selection-start-line="13" selection-start-column="72" selection-end-line="13" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DynamicProxy_/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="14" column="10" selection-start-line="14" selection-start-column="10" selection-end-line="14" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/util/stream/ReferencePipeline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="182" column="4" selection-start-line="182" selection-start-column="4" selection-end-line="182" selection-end-column="4" />
-          <folding>
-            <element signature="e#5463#5493#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/util/Collection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="580" column="32" selection-start-line="580" selection-start-column="32" selection-end-line="580" selection-end-column="32" />
-          <folding>
-            <element signature="e#26957#26958#0" expanded="true" />
-            <element signature="e#27022#27023#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/util/stream/Stream.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="183" column="18" selection-start-line="183" selection-start-column="18" selection-end-line="183" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/list_/SelfListFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="108" column="25" selection-start-line="108" selection-start-column="25" selection-end-line="108" selection-end-column="25" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#327#328#0" expanded="true" />
-            <element signature="e#352#353#0" expanded="true" />
-            <element signature="e#389#390#0" expanded="true" />
-            <element signature="e#417#418#0" expanded="true" />
-            <element signature="e#448#449#0" expanded="true" />
-            <element signature="e#475#476#0" expanded="true" />
-            <element signature="e#515#516#0" expanded="true" />
-            <element signature="e#547#548#0" expanded="true" />
-            <element signature="e#642#643#0" expanded="true" />
-            <element signature="e#668#669#0" expanded="true" />
-            <element signature="e#707#708#0" expanded="true" />
-            <element signature="e#737#738#0" expanded="true" />
-            <element signature="e#769#770#0" expanded="true" />
-            <element signature="e#797#798#0" expanded="true" />
-            <element signature="e#839#840#0" expanded="true" />
-            <element signature="e#873#874#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/fs/TstFs.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/javaSpi/src/main/java/com/lp/interface_/Car.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="91">
-          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/javaSpi/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="13" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/util/ServiceLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="184" column="19" selection-start-line="184" selection-start-column="19" selection-end-line="184" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/java-lang/src/main/java/list_/NonStopMachine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="22" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/javaSpi/src/main/resources/META-INF/services/com.lp.interface_.Car">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="1" column="20" selection-start-line="1" selection-start-column="20" selection-end-line="1" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/javaSpi/src/main/java/com/lp/impl/GreenCar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="13" column="10" selection-start-line="13" selection-start-column="10" selection-end-line="13" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/javaSpi/src/main/java/com/lp/impl/RedCar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="11" column="36" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/javaSpi/src/main/java/com/lp/cn/JavaSPIPort.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="15" column="34" selection-start-line="15" selection-start-column="34" selection-end-line="15" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/sql/Driver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="57" column="17" selection-start-line="57" selection-start-column="17" selection-end-line="57" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="17" column="33" selection-start-line="17" selection-start-column="33" selection-end-line="17" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$MAVEN_REPOSITORY$/org/apache/dubbo/dubbo/2.7.5/dubbo-2.7.5.pom">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF.dubbo">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF.dubbo" />
     <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/sql/DriverManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-247">
@@ -1457,20 +1214,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dubboSpi/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="18" column="34" selection-start-line="18" selection-start-column="34" selection-end-line="18" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/IAImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/IAImpl.java" />
     <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.2/dubbo-2.6.2.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="174">
@@ -1485,14 +1229,55 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IAImpl.java">
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/services/com.lp.inter.IA">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="13" column="13" lean-forward="true" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+        <state relative-caret-position="13">
+          <caret line="1" column="22" selection-start-line="1" selection-start-column="22" selection-end-line="1" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/dubbo/AAC.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="22" column="12" lean-forward="true" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
           <folding>
-            <element signature="e#236#237#0" expanded="true" />
-            <element signature="e#261#262#0" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#tr#0;n#tbody#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#1;n#tr#0;n#tbody#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/lang/Class.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="3423" column="77" lean-forward="true" selection-start-line="3423" selection-start-column="77" selection-end-line="3423" selection-end-column="77" />
+          <folding>
+            <element signature="e#23047#23048#0" expanded="true" />
+            <element signature="e#23104#23105#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.5.3/dubbo-2.5.3-sources.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="302" column="13" selection-start-line="302" selection-start-column="13" selection-end-line="302" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2625#2655#0" expanded="true" />
+            <element signature="e#3376#3400#0" expanded="true" />
+            <element signature="e#3829#3830#0" expanded="true" />
+            <element signature="e#3887#3888#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/provider/impl/IBImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
         </state>
       </provider>
     </entry>
@@ -1503,45 +1288,344 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/impl/IBImpl.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.5.3/dubbo-2.5.3-sources.jar!/com/alibaba/dubbo/common/logger/LoggerFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        <state relative-caret-position="219">
+          <caret line="82" selection-start-line="82" selection-end-line="82" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.5.3/dubbo-2.5.3-sources.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.java">
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/logging.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/inter/IA.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="613" column="71" selection-start-line="613" selection-start-column="71" selection-end-line="613" selection-end-column="71" />
+        <state relative-caret-position="26">
+          <caret line="2" column="46" selection-start-line="2" selection-start-column="46" selection-end-line="2" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dubboSpi/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="22" column="42" lean-forward="true" selection-start-line="22" selection-start-column="42" selection-end-line="22" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4.jar!/com/alibaba/dubbo/common/extension/ExtensionFactory.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4.jar!/com/alibaba/dubbo/common/logger/LoggerFactory.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="56">
+          <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4.jar!/com/alibaba/dubbo/common/extension/factory/SpiExtensionFactory.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="19" column="41" selection-start-line="19" selection-start-column="41" selection-end-line="19" selection-end-column="41" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2625#2655#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="417" column="47" lean-forward="true" selection-start-line="417" selection-start-column="47" selection-end-line="417" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/provider/impl/IAImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="11" column="31" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
+          <folding>
+            <element signature="e#236#237#0" expanded="true" />
+            <element signature="e#261#262#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4-sources.jar!/com/alibaba/dubbo/common/extension/ExtensionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="22" column="17" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4-sources.jar!/com/alibaba/dubbo/config/spring/extension/SpringExtensionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13">
+          <caret line="47" column="25" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
+          <folding>
+            <element signature="e#1576#1596#0" expanded="true" />
+            <element signature="e#1906#1907#0" expanded="true" />
+            <element signature="e#1938#1939#0" expanded="true" />
+            <element signature="e#1959#1989#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/jdk1.8.0_121/src.zip!/java/util/Collections.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="317">
+          <caret line="1285" column="46" selection-start-line="1285" selection-start-column="30" selection-end-line="1285" selection-end-column="46" />
+          <folding>
+            <element signature="e#58225#58226#0" expanded="true" />
+            <element signature="e#58260#58261#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4-sources.jar!/com/alibaba/dubbo/common/extension/factory/SpiExtensionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="32" column="41" selection-start-line="32" selection-start-column="41" selection-end-line="32" selection-end-column="41" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/DubboMainPortal.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="16" column="52" lean-forward="true" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
+        <state relative-caret-position="247">
+          <caret line="19" column="91" selection-start-line="19" selection-start-column="91" selection-end-line="19" selection-end-column="91" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/java/com/lp/inter/IA.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4-sources.jar!/com/alibaba/dubbo/common/extension/ExtensionLoader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
+        <state relative-caret-position="294">
+          <caret line="736" selection-start-line="736" selection-end-line="736" />
+          <folding>
+            <element signature="e#3603#3611#0" expanded="true" />
+            <element signature="e#5244#5245#0" expanded="true" />
+            <element signature="e#5305#5306#0" expanded="true" />
+            <element signature="e#28709#28739#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4-sources.jar!/com/alibaba/dubbo/common/compiler/support/AdaptiveCompiler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="36" column="59" selection-start-line="36" selection-start-column="59" selection-end-line="36" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4-sources.jar!/com/alibaba/dubbo/common/compiler/support/AbstractCompiler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="129">
+          <caret line="37" column="19" selection-start-line="37" selection-start-column="19" selection-end-line="37" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/alibaba/dubbo/2.6.4/dubbo-2.6.4-sources.jar!/com/alibaba/dubbo/common/extension/factory/AdaptiveExtensionFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="45" column="52" selection-start-line="45" selection-start-column="52" selection-end-line="45" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/tools/LocalRegister.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="18" column="50" selection-start-line="18" selection-start-column="50" selection-end-line="18" selection-end-column="50" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#360#361#0" expanded="true" />
+            <element signature="e#416#417#0" expanded="true" />
+            <element signature="e#512#513#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/service/HelloService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="8" selection-start-column="8" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/io/netty/netty-all/4.1.16.Final/netty-all-4.1.16.Final.jar!/io/netty/channel/ChannelHandler.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/ChannelHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/DispatcherHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="22" column="53" selection-start-line="22" selection-start-column="53" selection-end-line="22" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/Task.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="25" column="56" selection-start-line="25" selection-start-column="35" selection-end-line="25" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/RequestHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/NettyServerHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#307#308#0" expanded="true" />
+            <element signature="e#359#360#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/io/netty/netty-all/4.1.16.Final/netty-all-4.1.16.Final.jar!/io/netty/handler/codec/serialization/ClassResolvers.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/io/netty/netty-all/4.1.16.Final/netty-all-4.1.16.Final-sources.jar!/io/netty/handler/codec/serialization/ClassResolvers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="51" column="45" selection-start-line="51" selection-start-column="37" selection-end-line="51" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/tools/URL.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/NettyServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="235">
+          <caret line="36" column="58" lean-forward="true" selection-start-line="36" selection-start-column="58" selection-end-line="36" selection-end-column="58" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1089#1801#0" expanded="true" />
+            <element signature="e#1800#1801#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/impl/HelloServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/CliSocket.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
           <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dubboSpi/src/main/resources/META-INF/dubbo/com.lp.inter.IA">
+    <entry file="file://$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/EnumBaseProduct.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="1" column="22" lean-forward="true" selection-start-line="1" selection-start-column="22" selection-end-line="1" selection-end-column="22" />
+        <state relative-caret-position="143">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/java-rpc/src/main/java/com/lp/bio/SerSocket.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="35" column="42" lean-forward="true" selection-start-line="35" selection-start-column="42" selection-end-line="35" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/netty_self/Invocation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="30" column="43" lean-forward="true" selection-start-line="30" selection-start-column="43" selection-end-line="30" selection-end-column="43" />
+          <folding>
+            <element signature="e#482#483#0" expanded="true" />
+            <element signature="e#518#519#0" expanded="true" />
+            <element signature="e#576#577#0" expanded="true" />
+            <element signature="e#626#627#0" expanded="true" />
+            <element signature="e#663#664#0" expanded="true" />
+            <element signature="e#696#697#0" expanded="true" />
+            <element signature="e#748#749#0" expanded="true" />
+            <element signature="e#792#793#0" expanded="true" />
+            <element signature="e#830#831#0" expanded="true" />
+            <element signature="e#863#864#0" expanded="true" />
+            <element signature="e#916#917#0" expanded="true" />
+            <element signature="e#960#961#0" expanded="true" />
+            <element signature="e#995#996#0" expanded="true" />
+            <element signature="e#1024#1025#0" expanded="true" />
+            <element signature="e#1070#1071#0" expanded="true" />
+            <element signature="e#1106#1107#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/provider/ActionStarter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/consumer/Consumer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my-rpc/src/main/java/com/lp/proxy/ProxyFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

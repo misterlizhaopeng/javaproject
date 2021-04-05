@@ -15,6 +15,7 @@
         <module name="javalang" />
         <module name="javaSpi" />
         <module name="javathread" />
+        <module name="myrpc" />
         <module name="source_sf" />
         <module name="TestHW" />
       </profile>

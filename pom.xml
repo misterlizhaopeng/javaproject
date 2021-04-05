@@ -20,6 +20,7 @@
         <module>DynamicProxy_</module>
         <module>javaSpi</module>
         <module>dubboSpi</module>
+        <module>my-rpc</module>
     </modules>
 
 </project>

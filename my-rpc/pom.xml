@@ -9,22 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dubboSpi</artifactId>
+    <artifactId>my-rpc</artifactId>
+
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo -->
         <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>2.7.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>2.6.4</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.16.Final</version>
         </dependency>
 
     </dependencies>
-
-
 </project>
