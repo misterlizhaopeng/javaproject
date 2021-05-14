@@ -8,10 +8,11 @@ import java.util.List;
  */
 public class App {
     public static void main(String[] args) {
-        Integer[] arrInt = {1, 11, 232, 7, 3, 2, 4, 33, 43, 2, 21, 9};
+        int[] arrInt = {1, 11, 232, 7, 3, 2, 4, 33, 43, 2, 21, 9};
         Integer[] arrInt2 = {2, 7, 6, 3};
         //maopao(arrInt);
-        quickSort(arrInt2, 0, arrInt2.length - 1);
+        //quickSort(arrInt2, 0, arrInt2.length - 1);
+        int [] nums=sortMerge(arrInt,0,arrInt.length-1);
 
         List<Integer> ints = Arrays.asList(arrInt2);
         ints.forEach(a -> {
@@ -74,6 +75,32 @@ public class App {
 
         quickSort(arr, _low, low - 1);  //在计算从最左侧到基于上面基准量-1
         quickSort(arr, high + 1, _high);  //在基于上面基准量+1，在计算(在计算和第一个递归意思一样)，这是个人总结
+    }
+
+
+    /**
+     * 归并排序
+     *
+     * @return
+     */
+    public static int[] sortMerge(int[] nums, int l, int r) {
+        //切到左索引等于右索引的时候，返回当前值，否则，递归切分，直至切到单个元素；
+        if (l == r) return new int[]{nums[l]};
+        int mid = l + (r - l) / 2;//l 从0开始，r 为当前数组的长度，这里
+        int[] leftArr = sortMerge(nums, l, mid);//左序列数组
+        int[] rightArr = sortMerge(nums, mid + 1, r);//右序列数组
+        int[] newArr = new int[leftArr.length + rightArr.length];//当前转移到的目标数组
+
+        //开始比较两个序列（左右序列）
+        int newIndex = 0, left = 0, right = 0;
+        while (left < leftArr.length && right < rightArr.length) {
+            newArr[newIndex++] = leftArr[left] < rightArr[right] ? leftArr[left++] : rightArr[right++];
+        }
+        while (left < leftArr.length)
+            newArr[newIndex++] = leftArr[left++];
+        while (right < rightArr.length)
+            newArr[newIndex++] = rightArr[right++];
+        return newArr;
     }
 
 }

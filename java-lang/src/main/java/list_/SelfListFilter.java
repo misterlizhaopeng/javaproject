@@ -1,8 +1,10 @@
 package list_;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import org.junit.Before;
+import org.junit.experimental.theories.suppliers.TestedOn;
+import org.testng.annotations.Test;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,7 +56,24 @@ public class SelfListFilter {
 
     }
 
+    @Before
+    public void before() {
+
+    }
+
+    @org.junit.Test
+    public void test_01() {
+        Iterator<Obj_1> iterator = l1.iterator();
+        while (iterator.hasNext()) {
+            Obj_1 obj_1 = iterator.next();
+            System.out.println(obj_1.getId() + ";" + obj_1.getName());
+        }
+        ListIterator<Obj_1> obj_1ListIterator = l1.listIterator();
+
+    }
+
     public static void main(String[] args) {
+
 
         List<Obj_2> obj2 = l1.stream().map(l1 -> l2.stream()
                 .filter(l2 -> Objects.equals(l1.getId(), l2.getUid()))
@@ -84,7 +103,9 @@ public class SelfListFilter {
 
 
 class Obj_1 {
+
     private Integer id;
+
     private String name;
 
     public Integer getId() {
