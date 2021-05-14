@@ -12,7 +12,7 @@ public class App {
         Integer[] arrInt2 = {2, 7, 6, 3};
         //maopao(arrInt);
         //quickSort(arrInt2, 0, arrInt2.length - 1);
-        int [] nums=sortMerge(arrInt,0,arrInt.length-1);
+        int[] nums = sortMerge(arrInt, 0, arrInt.length - 1);
 
         List<Integer> ints = Arrays.asList(arrInt2);
         ints.forEach(a -> {
@@ -84,7 +84,7 @@ public class App {
      * @return
      */
     public static int[] sortMerge(int[] nums, int l, int r) {
-        //切到左索引等于右索引的时候，返回当前值，否则，递归切分，直至切到单个元素；
+        //切到左索引等于右索引的时候，返回当前值，否则，递归切分，直至切到单个元素；（递归出口）
         if (l == r) return new int[]{nums[l]};
         int mid = l + (r - l) / 2;//l 从0开始，r 为当前数组的长度，这里
         int[] leftArr = sortMerge(nums, l, mid);//左序列数组
