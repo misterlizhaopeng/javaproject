@@ -1,5 +1,6 @@
 package thd_single;
 
+//懒汉- 单例
 public class LHPattern {
     private static volatile LHPattern lhPattern = null;
 

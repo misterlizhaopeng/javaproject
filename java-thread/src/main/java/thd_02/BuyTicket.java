@@ -2,7 +2,7 @@ package thd_02;
 
 public class BuyTicket implements Runnable {
     @Override
-    public  void run() {
+    public void run() {
         //当前线程对公共资源操作-1
         // 当前线程获取锁后才可以进行操作-1
         synchronized (Ticket.class) {

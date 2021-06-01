@@ -290,7 +290,7 @@ public abstract class AbstractQueuedSynchronizer
         if (pred != null) {
             // 2.2 将当前节点尾插入的方式
             node.prev = pred;
-            // 2.3 CAS将节点插入同步队列的尾部
+            // 2.3 CAS 将节点插入同步队列的尾部
             if (compareAndSetTail(pred, node)) {
                 pred.next = node;
                 return node;
@@ -1082,6 +1082,8 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * 判断当前节点是否有前驱节点
+     *
+     * 存在返回 true ，否则返回 false
      */
     public final boolean hasQueuedPredecessors() {
         Node t = tail; // Read fields in reverse initialization order
