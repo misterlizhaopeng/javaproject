@@ -19,7 +19,7 @@ public class NioClient {
      */
     public static void main(String[] args) throws IOException {
         NioClient client = new NioClient();
-        client.initClient("127.0.0.1", 9000);
+        client.initClient("127.0.0.1", 9002);
         client.connect();
     }
 
@@ -51,14 +51,14 @@ public class NioClient {
      */
     public void connect() throws IOException {
         //while(true) 表示当前线程 一直处于执行状态
-        // 轮询访问selector
+        // 轮询访问 selector
         while (true) {
             selector.select();
             // 获得selector中选中的项的迭代器
             Iterator<SelectionKey> it = this.selector.selectedKeys().iterator();
             while (it.hasNext()) {
                 SelectionKey key = (SelectionKey) it.next();
-                // 删除已选的key,以防重复处理
+                // 删除已选的 key, 以防重复处理
                 it.remove();
                 // 连接事件发生
                 if (key.isConnectable()) {
