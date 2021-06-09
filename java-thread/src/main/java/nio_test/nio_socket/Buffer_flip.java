@@ -4,7 +4,7 @@ import java.nio.CharBuffer;
 
 /**
  * @ClassName nio_test.nio_socket.Buffer_flip
- * @Deacription flip()方法的作用核心就是：limit=position；position=0；收缩的意思
+ * @Deacription flip()方法的作用核心就是：limit=position；position=0 ；收缩的意思
  * @Author LP
  * @Date 2021/6/5 19:08
  * @Version 1.0
