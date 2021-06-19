@@ -1,4 +1,4 @@
-package nio_test.nio_socket;
+package nio_test.nio_socket.buffer;
 
 import org.junit.Test;
 import java.nio.ByteBuffer;
