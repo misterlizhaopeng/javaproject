@@ -15,7 +15,7 @@ import java.nio.channels.FileChannel;
  *
  *                      4.测试FileChannel方法read返回值的意义；
  *                      5.测试从通道的当前位置开始读取
- *                      6.
+ *                      6.测试从通道中读取字节到缓冲区的指定位置
  * @Author LP
  * @Date 2021/6/29
  * @Version 1.0
