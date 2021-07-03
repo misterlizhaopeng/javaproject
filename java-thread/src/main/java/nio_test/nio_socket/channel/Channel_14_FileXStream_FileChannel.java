@@ -23,7 +23,7 @@ import java.nio.channels.FileChannel;
  *                      8.测试 : 读取的文件内容大于缓冲区的内容的情况，测试结果：缓冲区的remaining为多少，就从管道中读取多少
  *                      9.测试：从通道中读取的字节序列，放入缓冲区的 remaining 中
  *                      小结：
- *                          fileChannel.read(bytebuffer) ;按照bytebuffer的remaining的大小进行从管道的当前位置开始读取的，放到缓冲区的当前位置到limit位置（remaining）
+ *                          fileChannel.read(bytebuffer) ; 按照bytebuffer的remaining 的大小进行从管道的当前位置开始读取的，放到缓冲区的当前位置到limit位置（remaining）
  * @Author LP
  * @Date 2021/6/29
  * @Version 1.0
