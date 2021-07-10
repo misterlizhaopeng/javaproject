@@ -7,3 +7,7 @@
     接口的层次结构，可以看具体代码(Channel_1*到Channel_12*)
 
 5.FileChannel(Channel_13*)
+6.从 通过文件流FileInputStream 、FileOutputStream 获取对象 FileChannel 来看，通道就是代表文件;
+    FileInputStream 代表读取文件的对象，以字节流格式输入到机器内存中， FileOutputStream 代表写文件，从机器内存往磁盘等硬件设备上写数据；
+    所以简单来看：对于通道的写操作 FileChannel.write()；表明现象是把数据写入通道，其实质是往文件里面写内容；
+            类似：对于通道读操作 FileChannel.read()；表面现象是从通道中读取到缓冲区，其实质是读取文件的内容写入内存缓冲区中；
