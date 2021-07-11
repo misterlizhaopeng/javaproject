@@ -15,6 +15,8 @@ import java.nio.channels.FileChannel;
  *                  FileChannel.position(long position);//设置通道的位置
  *                  FileChannel.size();//表示通道文件的大小，单位字节
  *
+ *                  注意：【使用FileOutputStream对象获取的文件通道，获取的文件大小为0，用 RandomAccessFile 对象获取的通道可以获取文件大小；】
+ *
  *
  * @Author LP
  * @Date 2021/7/11
