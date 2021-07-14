@@ -9,6 +9,8 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @ClassName nio_test.nio_socket.channel.Channel_25_lock_FileChannel
@@ -34,13 +36,221 @@ import java.nio.channels.FileLock;
  *                      1.测试：FileLock lock()方法是同步的【 测试方法1 和 测试方法2 】
  *                      2.验证：在此方法调用期间，另一个线程关闭了通道 的情况下，抛异常：AsynchronousCloseException
  *                      3.当前线程在获取锁的过程中，别的线程中断了当前线程，抛出异常：java.nio.channels.FileLockInterruptionException
- *                      4...
+ *                      4.测试: 当前线程 获取了[共享锁]之后，自己就不能对文件进行写操作：简单总结：共享锁自己不能写
+ *                      5.测试：当前线程 获取了[共享锁]之后，别人就不能对文件进行写操作：简单总结：共享锁别人不能写
+ *                      6.测试：当前线程 获取了[共享锁]之后，自己能对文件进行读操作：简单总结：共享锁自己能读
+ *                      7.测试：当前线程 获取了[共享锁]之后，别人能对文件进行读操作：简单总结：共享锁别人能读
+ *                      小结：共享锁是只读的
+ *
+ *                      8.测试：当前线程 获取了[独占锁]之后，自己能对文件进行写操作：简单总结：独占锁自己能写
+ *                      9.测试：当前线程 获取了[独占锁]之后，别人不能对文件进行写操作：简单总结：独占锁别人不能写
+ *                      10.测试：当前线程 获取了[独占锁]之后，自己能对文件进行读操作：简单总结：独占锁自己能读
+ *                      11.测试：当前线程 获取了[独占锁]之后，别人不能对文件进行读操作：简单总结：独占锁别人不能读
+ *
+ *
+ *
+ *
  *
  * @Author LP
  * @Date 2021/7/12
  * @Version 1.0
  **/
 public class Channel_25_lock_FileChannel {
+    /**
+     * 测试：当前线程 获取了[独占锁]之后，别人不能对文件进行读操作
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test_011_2() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_011_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+        fileChannel.read(byteBuffer);
+
+        byte[] array = byteBuffer.array();
+        for (int i = 0; i < array.length; i++) {
+            System.out.print((char)array[i]);
+        }
+    }
+    /**
+     * 测试：当前线程 获取了[独占锁]之后，别人不能对文件进行读操作
+     * @throws IOException
+     */
+    @Test
+    public void test_011_1() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_011_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        fileChannel.write(ByteBuffer.wrap("123456".getBytes()));//init 6 char
+        fileChannel.lock(0,fileChannel.size(),false);//加上独占锁
+        Thread.sleep(Integer.MAX_VALUE);
+    }
+
+    /**
+     * 测试：当前线程 获取了[独占锁]之后，自己能对文件进行读操作
+     * @throws IOException
+     */
+    @Test
+    public void test_010() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_010")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        int writeLen = fileChannel.write(ByteBuffer.wrap("abedefg".getBytes()));
+        System.out.println(String.format("init length is:%s", writeLen));
+
+        fileChannel.lock(0,fileChannel.size(),false);//给当前线程加上独占锁
+
+        //接着读取放到缓冲区
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+        System.out.println(String.format("bytebuffer's position:%s,capacity:%s,limit:%s",byteBuffer.position(),byteBuffer.capacity(),byteBuffer.limit()));
+
+        System.out.println(String.format("fileChannel's position:%s,size:%s",fileChannel.position(),fileChannel.size()));
+        //从通道的0位置开始读取字节序列放入缓冲区中
+        int readLen = fileChannel.read(byteBuffer,0);
+        System.out.println(String.format("读取的内容长度为：%s", readLen));
+        byte[] array = byteBuffer.array();
+        for (int i = 0; i < array.length; i++) {
+            System.out.println((char)array[i]);
+        }
+
+    }
+
+
+
+    /**
+     *  测试：当前线程 获取了[独占锁]之后，别人不能对文件进行写操作；测试过程中，独占锁锁定的只是一个范围，在别的进程下面的线程写非锁定的空间范围是不受锁的限制的
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test_09_2() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_09_2")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        fileChannel.position(6);
+        fileChannel.write(ByteBuffer.wrap("new Msg".getBytes()));
+    }
+    /**
+     * 测试：当前线程 获取了[独占锁]之后，别人不能对文件进行写操作；测试过程中，独占锁锁定的只是一个范围，在别的进程下面的线程写非锁定的空间范围是不受锁的限制的
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_09_1() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_09_2")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        //init file content
+        fileChannel.write(ByteBuffer.wrap("abc".getBytes()));
+        fileChannel.lock(1,fileChannel.size(),false);//获取独占锁
+        Thread.sleep(Integer.MAX_VALUE);
+    }
+
+    /**
+     * 测试：当前线程 获取了[独占锁]之后，自己能对文件进行写操作
+     * @throws IOException
+     */
+    @Test
+    public void test_08() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_08")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        //init file content
+        fileChannel.write(ByteBuffer.wrap("abc".getBytes()));
+
+        fileChannel.lock(0,fileChannel.size(),false);//获取独占锁
+        //写操作
+        int writeLen = fileChannel.write(ByteBuffer.wrap("defg".getBytes()));
+        System.out.println(String.format("%s",writeLen));
+
+    }
+
+
+    /**
+     * 测试：当前线程 获取了[共享锁]之后，别人能对文件进行读操作
+     * @throws IOException
+     */
+    @Test
+    public void test_07_2() throws IOException, InterruptedException {
+
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_07_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+        fileChannel.read(byteBuffer);
+        byte[] array = byteBuffer.array();
+        for (int i = 0; i < array.length; i++) {
+            System.out.println((char)array[i]);//可以读到内容
+        }
+    }
+
+    /**
+     * 测试：当前线程 获取了[共享锁]之后，别人能对文件进行读操作
+     * @throws IOException
+     */
+    @Test
+    public void test_07_1() throws IOException, InterruptedException {
+
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_07_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        fileChannel.write(ByteBuffer.wrap("ab".getBytes()));
+        fileChannel.lock(0,fileChannel.size(),true);//加上共享锁
+        Thread.sleep(Integer.MAX_VALUE);
+    }
+
+    /**
+     * 测试：当前线程 获取了[共享锁]之后，自己能对文件进行读操作
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test_06() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_06")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+
+        FileLock shareLock = fileChannel.lock(0, 5, true); //上共享锁
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+        fileChannel.read(byteBuffer);
+        //打印自己读取的内容的字节长度
+        System.out.println(byteBuffer.capacity());//存在长度，说明测试成功
+    }
+
+
+
+
+    /**
+     * 测试：当前线程 获取了[共享锁]之后，别人就不能对文件进行写操作
+     * @throws IOException
+     */
+    @Test
+    public void test_05_2() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_05_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        fileChannel.write(ByteBuffer.wrap("abc123".getBytes()));
+
+    }
+    /**
+     * 测试：当前线程 获取了[共享锁]之后，别人就不能对文件进行写操作
+     * @throws IOException
+     */
+    @Test
+    public void test_05_1() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_05_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        fileChannel.lock(1,2,true);//获取共享锁，正在测试别的线程不能写
+        Thread.sleep(Integer.MAX_VALUE);
+    }
+
+    /**
+     *
+     * 测试:当前线程 获取了[共享锁]之后，自己就不能对文件进行写操作
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_055() throws IOException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_05")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        FileLock shareLock = fileChannel.lock(0, 2, true);//通过通道获取共享锁
+        fileChannel.write(ByteBuffer.wrap("123456".getBytes()));//写操作
+    }
+
+
     /**
      * 当前线程在获取锁的过程中，别的线程中断了当前线程，抛出异常：java.nio.channels.FileLockInterruptionException
      *
@@ -155,4 +365,5 @@ public class Channel_25_lock_FileChannel {
 
 
 }
+
 
