@@ -9,8 +9,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @ClassName nio_test.nio_socket.channel.Channel_25_lock_FileChannel
@@ -30,6 +28,8 @@ import java.util.List;
  *
  *                      文件锁定是以jvm虚拟机来保持的。但他们不适用于一个jvm虚拟机下的多个线程对文件的访问。
  *
+ *                      FileChannel 加锁，也可以说获取锁！！！！
+ *
  *
  *
  *
@@ -41,12 +41,19 @@ import java.util.List;
  *                      6.测试：当前线程 获取了[共享锁]之后，自己能对文件进行读操作：简单总结：共享锁自己能读
  *                      7.测试：当前线程 获取了[共享锁]之后，别人能对文件进行读操作：简单总结：共享锁别人能读
  *                      小结：共享锁是只读的
- *
  *                      8.测试：当前线程 获取了[独占锁]之后，自己能对文件进行写操作：简单总结：独占锁自己能写
  *                      9.测试：当前线程 获取了[独占锁]之后，别人不能对文件进行写操作：简单总结：独占锁别人不能写
  *                      10.测试：当前线程 获取了[独占锁]之后，自己能对文件进行读操作：简单总结：独占锁自己能读
  *                      11.测试：当前线程 获取了[独占锁]之后，别人不能对文件进行读操作：简单总结：独占锁别人不能读
  *                      小结：独占锁只能自己读写，别人不能读写操作
+ *
+ *                      12.验证lock方法参数position和size的含义
+ *                      13.提前锁定
+ *
+ *                      14.测试：共享锁之间不是互斥关系
+ *                      15.测试：共享锁/独占锁间是互斥关系
+ *                              > 建立在14的基础上把test_014_2的锁变为独占锁，就不能正常获取独占锁了
+ *                      16.
  *
  *
  *
@@ -57,6 +64,122 @@ import java.util.List;
  * @Version 1.0
  **/
 public class Channel_25_lock_FileChannel {
+
+
+    /**
+     * 测试：共享锁之间不是互斥关系
+     * test_014_1加了共享锁，test_014_2再次获取一次共享锁，也是成功的，这就验证了测试的结论
+     * @throws IOException
+     */
+    @Test
+    public void test_014_2 () throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_014_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        //fileChannel.lock(0,Integer.MAX_VALUE,true);
+        fileChannel.lock(0,Integer.MAX_VALUE,false);//测试第15种情况
+        System.out.println("B 获取共享锁成功");
+
+    }
+
+    /**
+     * 测试：共享锁之间不是互斥关系
+     * @throws IOException
+     */
+    @Test
+    public void test_014_1 () throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_014_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        //对该文件提前加上共享锁
+        fileChannel.lock(0,Integer.MAX_VALUE,true);
+        Thread.sleep(Integer.MAX_VALUE);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     * 提前锁定
+     *
+     * 就是当文件大小小于position时，提前在position 位置加锁
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_013() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_013")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+
+        //初始化2个字节的文本大小
+        fileChannel.write(ByteBuffer.wrap("ab".getBytes()));
+        //提起锁定位置position=6，范围为2的字节序列
+        fileChannel.lock(6,2,true);//加上共享锁
+
+        //此种情况下，可以再写 4 个字节
+        for (int i = 1; i <= 10; i++) {
+            if (i==5){ //跳过加锁的范围，如果有这个代码就不会在抛异常了
+                fileChannel.position(8);
+            }
+            System.out.println(i);
+            fileChannel.write(ByteBuffer.wrap((i+"").getBytes()));
+        }
+    }
+
+
+
+    /**
+     *
+     * 验证lock方法参数position和size的含义
+     *
+     * 上面是对锁的特性的研究，当前单元测试是对lock参数position，size的了解，其实position表示从哪个地方上锁，size表示上锁的区域范围；
+     * @throws IOException
+     */
+    @Test
+    public void test_012() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_012")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        //init content
+        fileChannel.write(ByteBuffer.wrap("abc123".getBytes()));
+
+
+        System.out.println(String.format("通道的位置：%s",fileChannel.position()));//6
+        fileChannel.position(0);
+        System.out.println(String.format("通道的位置：%s",fileChannel.position()));//0
+        fileChannel.lock(3,2,true);//加上共享锁
+
+        fileChannel.write(ByteBuffer.wrap("1".getBytes()));//index=0
+        System.out.println(String.format("1 通道的位置：%s",fileChannel.position()));
+        fileChannel.write(ByteBuffer.wrap("2".getBytes()));//index=1
+        System.out.println(String.format("2 通道的位置：%s",fileChannel.position()));
+        fileChannel.write(ByteBuffer.wrap("3".getBytes()));//index=2
+        System.out.println(String.format("3 通道的位置：%s",fileChannel.position()));//此时position为3
+
+//        fileChannel.write(ByteBuffer.wrap("4".getBytes()));//index=3：此时是向position为3 的位置进行写入4这个字节的操作
+//        System.out.println(String.format("4 通道的位置：%s",fileChannel.position()));//抛异常
+
+        fileChannel.position(5);
+        fileChannel.write(ByteBuffer.wrap("56".getBytes()));//index=5：跳过position=3，范围为2，也就是[3,4]，所以测试对position=5位置进行写操作，不抛异常
+        System.out.println(String.format("56 通道的位置：%s",fileChannel.position()));//此时 position 为 7
+
+
+
+
+
+
+    }
+
+
+
+
+
     /**
      * 测试：当前线程 获取了[独占锁]之后，别人不能对文件进行读操作
      * @throws IOException
