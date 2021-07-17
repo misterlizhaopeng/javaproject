@@ -12,7 +12,7 @@ import java.nio.channels.FileLock;
 
 /**
  * @ClassName nio_test.nio_socket.channel.Channel_25_lock_FileChannel
- * @Deacription : FileLock lock(long position, long size, boolean shared):获取此通道的文件指定区域上的锁。
+ * @Deacription : FileLock lock(long position, long size, boolean shared): 获取此通道的文件指定区域上的锁。
  *                      在可以锁定通道之前，已关闭此通道之前或者已中断调用此线程之前（以先到者为准），将阻塞此方法调用。
  *
  *                      在此方法调用期间，另一个线程关闭了通道，抛异常：AsynchronousCloseException（If another thread closes this channel while the invoking thread is blocked in this method）；
@@ -28,12 +28,12 @@ import java.nio.channels.FileLock;
  *
  *                      文件锁定是以jvm虚拟机来保持的。但他们不适用于一个jvm虚拟机下的多个线程对文件的访问。
  *
- *                      FileChannel 加锁，也可以说获取锁！！！！
+ *                      [个人体会]FileChannel 加锁，也可以说获取锁！！！！
  *
  *
  *
  *
- *                      1.测试：FileLock lock()方法是同步的【 测试方法1 和 测试方法2 】
+ *                      1.测试：FileLock lock() 方法是同步的【 测试方法1 和 测试方法2 】
  *                      2.验证：在此方法调用期间，另一个线程关闭了通道 的情况下，抛异常：AsynchronousCloseException
  *                      3.当前线程在获取锁的过程中，别的线程中断了当前线程，抛出异常：java.nio.channels.FileLockInterruptionException
  *                      4.测试: 当前线程 获取了[共享锁]之后，自己就不能对文件进行写操作：简单总结：共享锁自己不能写
@@ -53,10 +53,35 @@ import java.nio.channels.FileLock;
  *                      14.测试：共享锁之间不是互斥关系
  *                      15.测试：共享锁/独占锁间是互斥关系
  *                              > 建立在14的基础上把test_014_2的锁变为独占锁，就不能正常获取独占锁了
- *                      16.
+ *                      16.独占锁与共享锁以及独占锁与独占锁之间都是护持关系；( 代码：略 )
+ *                      17.FileLock lock();默认调用的是带参数的lock方法
+ *                      18.各字节类型表示文件内容的最大值
+ *                              Integer 可以表示最大的字节量为：1.9G，Long 可以表示的最大字节量为：八百八十多万 TB（具体为： 8388608 TB）
+ *                      19.获取通道文件给定区域的锁定
+ *                          tryLock()方法不会阻塞：无论是否成功获取锁，调用总是立即返回；
+ *                              如果由于另一个程序保持着重叠锁定而无法获取锁，则此方法返回null，如果由于任何其他原因无法获取锁，则抛相应的异常；
+ *                              position，size表示的范围无须在文件中真是存在，锁定区域是固定的；假如文件扩大，新增加的内容无法被原先锁定，如果要锁定，需要调整锁定范围；
+ *                          某些操作系统不支持共享锁，可以通过FileLock.isShare()方法进行判断获取的锁是独占的还是共享的；
  *
+ *                          文件锁定是以整个java 虚拟机来保持。但他们不适用于控制同一虚拟机内多个线程对文件的访问。(需要理解)
  *
- *
+ *                          tryLock(...) 、lock(...)区别：
+ *                          tryLock(...) 非阻塞 而 lock(...) 是阻塞的，如果tryLock(...) 获取不到锁，返回 null
+ *                          测试：tryLock(...) 为非阻塞的锁；
+ *                      20.FileLock tryLock() 无参尝试锁定方法，底层调用的是tryLock(...)有参方法
+ *                      21.FileLock 类的作用：
+ *                          表示文件区间锁定的标志 ；锁定对象失效的三种方法: 调用锁定对象的 release() 方法，关闭通道或者关闭虚拟机；可以通过 FileLock.invalid() 方法判断 当前锁对象是否有效；
+ *                          文件锁要么独占，要么共享，共享锁允许其他程序获取共享锁，大不能允许获取独占锁，而独占锁，不允许其他程序获取任和锁，当前锁一旦释放了，就不会对其他程序产生影响了；
+ *                          isShare()方法判断当前锁的是共享还是独占，一些os不支持共享锁，会把共享锁自动转换为独占锁；
+ *                          单个jvm 在保持某个文件上的锁定是不重叠的。要想测试某个锁定范围是否与现有锁重叠，可使用 overlaps() 方法；
+ *                          文件锁定对象保持了锁定文件的通道、锁的类型和有效性，以及锁定区域的位置和大小。只有锁定有效性会随着时间改变，其他特性保持不变；
+ *                          文件锁定以整个jvm虚拟机来保持。但他们不适用于控制同一个虚拟机内多个线程对文件的访问（需要理解）；
+ *                          多个并发线程可以安全的使用文件锁定对象；
+ *                          FileLock具有平台依赖性：就是说文件锁定对象锁定文件，是直接映射到os底层对文件进行锁定的，所以，这个锁对象对于其他任何程序都是可见的，体现锁特性；
+ *                          由于某个锁定是否阻止另一个程序锁定访问该锁定区域的内容，是与os有关系的，因此是未指定的；不同的os存在不同的锁定特点：
+ *                              劝告锁定、强制锁定，为了确保平台之间的统一和正确性，强烈建议：将此API提供的锁定作为劝告锁定来使用；
+ *                          有些os上，在某个文件区域上获取 强制锁定 会阻止该区域 被映射到内存中，反之亦然（需要理解，是不是从内存中在弄到磁盘上也是被阻止的？？）。组合锁定和映射的程序应该为此组合的失败做好准备；
+ *                          在有的os上，关闭通道会释放java虚拟机底层文件上所保持的所有锁定，而不管该锁定是当前通道打开的还是其他的通道打开的，强烈建议：在程序内使用唯一通道来获取当前文件的所有锁定（资料就是这个意思，应该没错，个人分析的）；
  *
  *
  * @Author LP
@@ -64,6 +89,126 @@ import java.nio.channels.FileLock;
  * @Version 1.0
  **/
 public class Channel_25_lock_FileChannel {
+
+
+    /**
+     *
+     * FileLock.overlaps()作用：判断此锁定是否与给定锁定区域重叠;
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_021_2() throws IOException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_021")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        FileLock lock = fileChannel.lock(1, 10, true);
+        //boolean overlaps = lock.overlaps(2, 5);//返回true，至少重叠1个字节成立
+        boolean overlaps = lock.overlaps(11, 12);
+        System.out.println(String.format("overlaps=%s", overlaps));
+    }
+
+    /**
+     *
+     * 该示例说明几点：
+     * 1.通过锁对象FileLock获取通道表示当前上锁文件的通道对象，最新jdk中，锁对象的方法：acquiredBy() 也是返回锁定文件通道对象的；
+     * 2.FileLock.release() 可以让当前的锁无效，FileLock.close() 方法底层就是调用的 release() 方法；
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test_021_1() throws IOException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile(  "Channel_25_lock_FileChannel_test_021")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        System.out.println(String.format("filechannel.hashCode=%s", fileChannel.hashCode()));//
+        FileLock lock = fileChannel.lock(1,10,true);
+        System.out.println(String.format("lock.position=%s,lock.size=%s,lock.isValid=%s,lock.isShared=%s,lock.channel.hashcode=%s,lock.acquiredby.hashcode=%s",
+                lock.position(),lock.size(),lock.isValid(),lock.isShared(),lock.channel().hashCode(),lock.acquiredBy().hashCode()));
+        lock.release();//释放锁对象
+        lock = fileChannel.lock(1, 10, false);//独占锁
+        System.out.println(String.format("lock.position=%s,lock.size=%s,lock.isValid=%s,lock.isShared=%s,lock.channel.hashcode=%s,lock.acquiredby.hashcode=%s",
+                lock.position(),lock.size(),lock.isValid(),lock.isShared(),lock.channel().hashCode(),lock.acquiredBy().hashCode()));
+        lock.close();
+        fileChannel.close();
+        System.out.println(String.format("lock.position=%s,lock.size=%s,lock.isValid=%s,lock.isShared=%s,lock.channel.hashcode=%s,lock.acquiredby.hashcode=%s",
+                lock.position(),lock.size(),lock.isValid(),lock.isShared(),lock.channel().hashCode(),lock.acquiredBy().hashCode()));
+
+
+
+
+    }
+
+
+    /**
+     * 测试当前获取锁的方法tryLock为非阻塞的
+     *      先执行test_019_1，再执行test_019_2，test_019_2 返回的锁为空 ，
+     *      因为 test_019_1 获取的是独占锁，如果是共享锁，
+     *      则 test_019_2 就可以获取锁了；
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_019_2() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile(Channel_25_lock_FileChannel.class.getName() + "_test_019_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        FileLock fileLock = fileChannel.tryLock(0, 3, true);
+        System.out.println(String.format("%s", fileLock));
+        Thread.sleep(Integer.MAX_VALUE);
+        randomAccessFile.close();
+        fileChannel.close();
+    }
+    /**
+     * 测试当前获取锁的方法tryLock为非阻塞的
+     * @throws IOException
+     */
+    @Test
+    public void test_019_1() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile(Channel_25_lock_FileChannel.class.getName() + "_test_019_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        FileLock fileLock = fileChannel.tryLock(0, 5, false);
+        System.out.println(String.format("%s", fileLock));
+        Thread.sleep(Integer.MAX_VALUE);
+        randomAccessFile.close();
+        fileChannel.close();
+    }
+
+    /**
+     * 各字节类型表示文件内容的最大值（单位为字节）
+     */
+    @Test
+    public void test01() {
+        System.out.println("Byte: "+Byte.MAX_VALUE+"###"+Byte.MIN_VALUE+" byte_number: "+Byte.SIZE);
+        System.out.println("Short: "+Short.MAX_VALUE+"###"+Short.MIN_VALUE+" byte_number: "+Short.SIZE);
+        System.out.println("Integer: "+Integer.MAX_VALUE+"###"+Integer.MIN_VALUE+" byte_number: "+Integer.SIZE);
+        System.out.println("Long: "+Long.MAX_VALUE+"###"+Long.MIN_VALUE+" byte_number: "+Long.SIZE);
+        System.out.println("Float: "+Float.MAX_VALUE+"###"+Float.MIN_VALUE+" byte_number: "+Float.SIZE);
+        System.out.println("Double: "+Double.MAX_VALUE+"###"+Double.MIN_VALUE+" byte_number: "+Double.SIZE);
+        System.out.println("Char: "+" byte_number: "+Character.SIZE);
+    }
+
+    /**
+     *
+     * FileLock lock()方法的探究：锁定文件大小为Long的最大值，且为互斥锁，上锁的方法就是lock方法；
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_015() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_015")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        FileLock lock = fileChannel.lock();
+
+        /**
+         * lock():
+         * 源码：
+         *  public final FileLock lock() throws IOException {
+         *         return lock(0L, Long.MAX_VALUE, false);
+         *  }
+         *
+         */
+
+
+    }
 
 
     /**
