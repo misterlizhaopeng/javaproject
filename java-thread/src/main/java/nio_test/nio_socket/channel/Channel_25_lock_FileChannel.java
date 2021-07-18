@@ -1,5 +1,6 @@
 package nio_test.nio_socket.channel;
 
+import ch.qos.logback.core.util.FileSize;
 import org.junit.Test;
 
 import java.io.File;
@@ -7,8 +8,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 /**
  * @ClassName nio_test.nio_socket.channel.Channel_25_lock_FileChannel
@@ -83,12 +87,383 @@ import java.nio.channels.FileLock;
  *                          有些os上，在某个文件区域上获取 强制锁定 会阻止该区域 被映射到内存中，反之亦然（需要理解，是不是从内存中在弄到磁盘上也是被阻止的？？）。组合锁定和映射的程序应该为此组合的失败做好准备；
  *                          在有的os上，关闭通道会释放java虚拟机底层文件上所保持的所有锁定，而不管该锁定是当前通道打开的还是其他的通道打开的，强烈建议：在程序内使用唯一通道来获取当前文件的所有锁定（资料就是这个意思，应该没错，个人分析的）；
  *
+ *                      22.FileChannel.force(boolean metaData);
+ *                          强制对通道文件的更改写入设备中（比如磁盘）；以为FileChannel的 write 方法自动会把要写的内容先放到os内核缓存中，然后找到一个合适的时间点，再写到设备中，这样会出现内容写到设备出现延迟，force方法是强制把文件内容写到设备中；
+ *                          metaData:true把文件内容和元数据更新大设备中，false只是把文件内容更新到设备中；
+ *                          通过下面的测试代码，加上force方法调用之后，性能的确有下降；
+ *
+ *                      23.将通道文件区域直接映射到内存（可以理解为把文件直接映射为缓冲区）
+ *                          MappedByteBuffer:map(MapMode mode,long position, long size): 将通道的文件区域映射到内存中,mode:映射方式，position:文件中的位置，size:映射文件区域大小，最大值为 Integer.MAX_VALUE ；
+ *                              存在三种映射文件方式：只读，读写，专用；
+ *                              a.只读：视图修改得到的缓冲区，会抛出异常（见：测试：只读模式）
+ *                              b.读写: 对缓冲区的更改最终会传播到文件；该更改对映射到同一文件的其他程序不一定是可见的；
+ *                              c.专用: 对得到的缓冲区的更改不会传播到文件中，并且该更改对于映射到同一文件的其他程序时不可见的；相反，会创建缓冲区已修改的部分内容的副本；
+ *                              对于只读模式来说，通道必须可以读操作，但对于读写模式或者专用模式，要求通道必须可读可写；
+ *                              映射的缓冲区的position为0，limit和容量为map方法的第三个参数size的个数 ，但其标记mark是不确定的；值得注意的是：在此缓冲区被垃圾回收之前，缓冲区和映射关系是有效的；
+ *                                  一旦映射缓冲区和文件建立关系之后，就不再依赖创建他的文件映射的通道了，比如关闭通道对缓冲区和文件的映射关系没有任何影响；
+ *
+ *                          认识 MappedByteBuffer
+ *                          测试：只读模式
+ *                          测试：可读可写模式
+ *                          测试：专用模式
+ *                          测试：MappedByteBuffer的force方法
+ *                          测试：MappedByteBuffer的load方法isLoaded方法
+ *                              load()方法：简单解释：将缓冲区的内容加载到物理内存中，此方法最大限度的确保当返回值时，缓冲区的内容位于物理内存中，调用此方法可能会导致一些页面错误，并导致发生io操作；
+ *                              isLoad()方法：简单解释：判断缓冲区的数据是否都在物理内存中，true表示所有数据极有可能都在物理内存中，因此是可以访问的，不会导致任何虚拟内存页错误，也无须任何io操作；
+ *                              返回false不意味着缓冲区的内容不位于物理内存中。返回值只是一个提示，因为在该方法返回之前，某些缓冲区的数据已经被 os 移动至物理内存了( 需要理解 )；
+ *                      24.打开一个文件
+ *                          FileChannel.open(Path path, OpenOption... options)
+ *                              path可以由File对象获取，接口 OpenOption 通常使用其实现为 StandardOpenOption ,StandardOpenOption 是一个枚举，测试用例如下：
+ *                              枚举 StandardOpenOption.CREATE 和 StandardOpenOption.WRITE 一起使用，才能成功创建文件，具体代码见 test_024_1
+ *                              枚举 StandardOpenOption.APPEND 的使用，具体代码见 test_024_2
+ *                              枚举 StandardOpenOption.READ 的使用，具体代码见 test_024_3
+ *                              枚举 StandardOpenOption.TRUNCATE_EXISTING 的使用，具体代码见 test_024_4
+ *                              枚举 StandardOpenOption.CREATE_NEW 的使用，具体代码见 test_024_5
+ *                              枚举 StandardOpenOption.DELETE_ON_CLOSE 的使用，具体代码见 test_024_6
+ *                              枚举 StandardOpenOption.SPARSE 的使用，具体代码见 test_024_7
+ *                              枚举 StandardOpenOption.SYNC 的使用，具体代码见 test_024_8
+ *                              枚举 StandardOpenOption.DSYNC 的使用：要求对文件内容的每次更新都同步到设备上，SYNC和DSYNC的区别为，DSYNC 只更新内容，而SYNC更新元数据和内容，和force方法作用一样；
+ *                      25.判断当前通道是否打开
+ *
  *
  * @Author LP
  * @Date 2021/7/12
  * @Version 1.0
  **/
 public class Channel_25_lock_FileChannel {
+
+    /**
+     *
+     * 判断当前通道是否打开
+     *      FileChannel.isOpen()返回true 或者 false
+     * @throws IOException
+     */
+    @Test
+    public void test_025 () throws IOException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_025")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        System.out.println(String.format("当前通道的状态：%s", fileChannel.isOpen()));
+
+        fileChannel.close();
+        //关闭通道
+        System.out.println(String.format("当前通道的状态：%s", fileChannel.isOpen()));
+
+
+    }
+
+
+    /**
+     *
+     * 测试：枚举 StandardOpenOption.SYNC 的使用
+     *      要求对文件内容或者元数据的每次更新都同步写入底层设备上；如果这样，运行效率就降低了，经过测试，性能降低的非常明显
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_024_8 () throws IOException{
+        FileChannel fileChannel = FileChannel.open(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_024_8")).toPath(),
+                                StandardOpenOption.SYNC,StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+        long begin = System.currentTimeMillis();
+        for (int i = 0; i < 200; i++) {
+            fileChannel.write(ByteBuffer.wrap("a".getBytes()));
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(String.format("执行时间：%s",end-begin));
+        fileChannel.close();
+
+    }
+    /**
+     * 测试：枚举 StandardOpenOption.SPARSE 的使用
+     *      打开文件，创建一个文件，如果这个文件位置特别大，占用了6个G 的位置无效空间，比如下面的代码，然后后面跟一个字节a，那么不创建 稀疏 文件的话，文件占用磁盘空间 是6G，如果创建了文件类型为稀疏 ，文件占用磁盘空间 是非常小的，因为 稀疏 把那些不存储数据的空间不让其占用磁盘容量，等以后写入有效数据后再占用磁盘容量；
+     *      注意：创建 系数文件的时候，要用枚举：StandardOpenOption.CREATE_NEW，不要用 StandardOpenOption.CREATE ；
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_024_7 () throws IOException{
+        FileChannel fileChannel = FileChannel.open(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_024_7_2")).toPath(),
+                StandardOpenOption.SPARSE,StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+        long fileSize = Integer.MAX_VALUE;
+        fileSize = fileSize+fileSize+fileSize;
+        fileChannel.position(fileSize);//设置通道的位置，从当前位置开始下面的写入操作
+        int writeLen = fileChannel.write(ByteBuffer.wrap("a".getBytes()));
+        fileChannel.close();
+
+    }
+    /**
+     *
+     * 测试：枚举 StandardOpenOption.DELETE_ON_CLOSE 的使用
+     *      打开文件，创建一个文件之后，关闭通道之后标记可以删除当前文件
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_024_6 () throws IOException, InterruptedException {
+        FileChannel fileChannel = FileChannel.open(new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_024_6")).toPath(), StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        Thread.sleep(1000);
+        fileChannel.close();
+    }
+
+    /**
+     * 测试：枚举 StandardOpenOption.CREATE_NEW 的使用
+     *      打开文件，创建一个文件，使用 StandardOpenOption.CREATE_NEW 枚举，但要和 StandardOpenOption.WRITE 一起使用，否则会报异常，同时，如果创建的这个文件存在，那么也会抛异常：文件已存在的异常；
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_024_5() throws IOException{
+        FileChannel fileChannel = FileChannel.open(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_024_5")).toPath(), StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+        fileChannel.close();
+    }
+
+    /**
+     * 测试：枚举 StandardOpenOption.TRUNCATE_EXISTING 的使用
+     *      打开文件，截断访问：如果当前枚举和 写入访问枚举打开文件一起使用，执行完了程序之后，文件被截断，内容为空，如果和读取访问枚举一起使用，文件内容不改变；
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_024_4() throws IOException{
+        File file = new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_024_4"));
+        FileChannel fileChannel = FileChannel.open(file.toPath(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.READ);
+        fileChannel.close();
+    }
+
+
+    /**
+     * 测试：枚举 StandardOpenOption.READ 的使用
+     *      打开文件，进行读取操作
+     * @throws IOException
+     */
+    @Test
+    public void test_024_3() throws IOException{
+        File file = new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_024_3"));
+        Path path = file.toPath();
+        FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.READ);
+        //根据文件对象File对象 初始化缓存大小
+        byte [] bytes = new byte[(int) file.length()];
+        int readLen = fileChannel.read(ByteBuffer.wrap(bytes));
+        
+        //打印缓存的内容
+        for (int i = 0; i < bytes.length; i++) {
+            System.out.print((char)bytes[i]);
+        }
+
+    }
+
+    /**
+     * 测试：枚举 StandardOpenOption.APPEND 的使用
+     *      打开文件，如果写入文件内容，以追加的方式进性操作文件
+     * @throws IOException
+     */
+    @Test
+    public void test_024_2() throws IOException{
+        File file = new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_024_2"));
+        Path path = file.toPath();
+        FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.APPEND);
+        int writeLen = fileChannel.write(ByteBuffer.wrap("12345".getBytes()));
+        fileChannel.close();
+    }
+
+
+    /**
+     *
+     * 测试：枚举 StandardOpenOption.CREATE /StandardOpenOption.WRITE 的使用
+     * 如果文件，创建文件操作
+     *      FileChannel.open(Path path, OpenOption... options) ：
+     *      path可以由File对象获取，接口 OpenOption 通常使用其实现为StandardOpenOption；
+     *      对于 StandardOpenOption.CREATE /StandardOpenOption.WRITE的使用，StandardOpenOption.CREATE 不能单独使用，否则会报错，因为这个枚举只是一个意图，要和 StandardOpenOption.WRITE 一起使用，才能成功创建文件；
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_024_1() throws IOException{
+        File file = new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_024x"));
+        Path path = file.toPath();
+        FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.CREATE,StandardOpenOption.WRITE);
+        //FileChannel fileChannel = FileChannel.open(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        fileChannel.close();//关闭通道
+
+    }
+    /**
+     * 测试：MappedByteBuffer的load 方法 / isLoaded 方法
+     *
+     * 此程序需要linux测试：在windows测试isLoad方法永远返回false
+     *
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_023_5() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_023_5")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, 100);
+        System.out.println(String.format("映射缓冲区是否加载到物理内存中:%s" , mappedByteBuffer.isLoaded()));
+        mappedByteBuffer.load();
+        System.out.println(String.format("映射缓冲区是否加载到物理内存中:%s" , mappedByteBuffer.isLoaded()));
+        fileChannel.close();
+        randomAccessFile.close();
+    }
+
+    /**
+     * 测试：MappedByteBuffer的force方法
+     *      强制将缓冲区所做的内容更改写入映射文件所在的设备上（如果文件在设备上，可以保证映射缓冲区创建以来或者最后一次调用此方法以来，正常写入设备，如果映射文件不在本地设备，无法保证）；
+     *      注意：此映射缓冲区必须是在 通道映射的模式为 读写模式映射的才行，否则调用此force方法无效！！
+     *      当然，调用此方法，在运行效率上会下降
+     * @throws IOException
+     */
+    @Test
+    public void test_023_4() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannetest_023_4")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, 100);
+        long begin = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            mappedByteBuffer.put("a".getBytes());
+            //mappedByteBuffer.force();//把当前映射缓冲区的内容强制写到文件中，会有性能的问题
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(end-begin);
+        fileChannel.close();
+        randomAccessFile.close();
+    }
+
+    /**
+     * 测试：专用模式
+     * 对于专用模式，不更改底层文件内容
+     * @throws IOException
+     */
+    @Test
+    public void test_023_3() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_023_3")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.PRIVATE, 3, 4);
+        System.out.println(String.format("mappedByteBuffer.position=%s,mappedByteBuffer.limit=%s,mappedByteBuffer.capacity=%s", mappedByteBuffer.position(),mappedByteBuffer.limit(),mappedByteBuffer.capacity()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        mappedByteBuffer.position(0);
+        mappedByteBuffer.put((byte)'o' );
+        mappedByteBuffer.put((byte)'1' );
+        mappedByteBuffer.put((byte)'2' );
+        mappedByteBuffer.put((byte)'3' );
+        fileChannel.close();
+        randomAccessFile.close();
+
+    }
+
+    /**
+     *
+     * 测试：可读可写模式
+     * 文件初识内容为abcde，被改为o123e
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_023_2() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_023_2")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, 5);
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        mappedByteBuffer.position(0);
+        mappedByteBuffer.put((byte)'o' );
+        mappedByteBuffer.put((byte)'1' );
+        mappedByteBuffer.put((byte)'2' );
+        mappedByteBuffer.put((byte)'3' );
+        fileChannel.close();
+        randomAccessFile.close();
+
+
+
+
+
+    }
+
+    /**
+     * 测试：只读模式
+     * @throws IOException
+     */
+    @Test
+    public void test_023_1() throws IOException{
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_023_1")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, 5);//只读模式
+//        mappedByteBuffer.putChar('1');//因为是只读的，不能更改数据
+        mappedByteBuffer.put("a".getBytes());//因为是只读的，不能更改数据
+
+    }
+    /**
+     *
+     * 认识 MappedByteBuffer:map(MapMode mode,long position, long size)
+     *         MappedByteBuffer map = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, 5);
+     *         map.force();//强制把缓冲区内容写包含映射文件的设备上
+     *         map.isLoaded();//判断是否在物理内存中
+     *         map.load();//buffer->cache
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_023() throws IOException, InterruptedException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(FilePahtVar.getFile("Channel_25_lock_FileChannel_test_023")), "rw");
+        FileChannel fileChannel = randomAccessFile.getChannel();
+        MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, 5);//
+        //        mappedByteBuffer.force();// 强制把缓冲区内容写到设备上
+        //        mappedByteBuffer.isLoaded();// 判断是否在物理内存中
+        //        mappedByteBuffer.load();// buffer->cache
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));
+        mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY,2,2);
+        //缓冲区第0个位置是c
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));//c
+        System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position()));//d
+        //System.out.println(String.format("%s position=%s", (char)mappedByteBuffer.get(),mappedByteBuffer.position())); //
+        Thread.sleep(500);
+        fileChannel.close();
+        randomAccessFile.close();
+
+        //byte[] array = map.array();
+        //        map.limit();
+        //        map.position();
+        //        map.capacity();
+
+    }
+
+    /**
+     *
+     * 测试 FileChannel.force(boolean metaData); 的性能
+     *
+     * @throws IOException
+     */
+    @Test
+    public void test_022() throws IOException {
+        File file = new File(FilePahtVar.getFile("Channel_25_lock_FileChanneltest_022"));
+        if (file.exists()){//如果文件存在
+            file.delete();
+        } else {
+            file.createNewFile();//如果不存在,创建文件
+        }
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        FileChannel fileChannel = fileOutputStream.getChannel();
+        long begin = System.currentTimeMillis();
+        for (int i = 0; i < 5000 ; i++) {
+            fileChannel.write(ByteBuffer.wrap("abcde".getBytes()));
+            fileChannel.force(false);
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(end-begin);
+        fileChannel.close();
+        fileOutputStream.close();
+    }
+
 
 
     /**
