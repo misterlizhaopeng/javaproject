@@ -11,12 +11,15 @@ import java.util.Enumeration;
  *                       NetworkInterface.getNetworkInterfaces() 的作用是取得 NetworkInterface 对象，返回该机器上的所有接口；
  *                       类 NetworkInterface 对象 的方法见测试方法test_01;
  *                       值得注意的是localhost 和 127.0.0.1 的区别，localhost 只是一个域名，有hosts文件解析为127.0.0.1 ；
- *                       测试方法test_01输出多组信息，代表存在多个网络接口，包括回环地址的虚拟设备以及真实的物理网卡；
+ *                       测试方法test_01输出多组信息，代表存在多个网络接口，包括回环地址的虚拟设备以及真实的物理网卡，如下：1.获取网络接口的基本信息；
+ *                       1.获取网络接口的基本信息
  *                          测试结论：
  *                                  1.网络设备的索引不是连续的 ；
  *                                  2.isLoopback针对lo设备返回true，其他设备返回false，因为系统中只有一个回环地址；
  *                                  3.networkInterface.isUp() 返回true，表示已开启并正常工作，比如手机无线网，连接，这个接口就正常，如果断开，就为false；
  *                                  4.在os为windows的 网络设备中 ，可以找到 networkInterface.getDisplayName() 名称
+ *                       2.获取MTU 的大小
+ *
  *
  *
  *
@@ -27,7 +30,33 @@ import java.util.Enumeration;
  **/
 public class Network_01_NetworkInterface_Profile {
 
+
     /**
+     * MTU: 网络传输以数据包为基本单位，MTU 表示网络最大传输单元，单位是字节；
+     *      以太网卡大多数默认MTU为1500字节，在ipv6 中，MTU 的范围是 1280-65535 ；
+     *      MTU设置的大小与网络传输速度有关，如果设置过大，传输很快，因为发送的数据包少了，但延迟很大，因为对方需要一点一点的 处理数据，如果设置过小，传输速度慢，因为传输的数据包多了。所以，建议不要随意更改网卡的 MTU 的值，因为有可能会发生网络传输的故障，致使传输数据不完整，发生丢包的现象；
+     *
+     * @throws SocketException
+     */
+    @Test
+    public void test_02() throws SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()){
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            String name = networkInterface.getName();
+            String displayName = networkInterface.getDisplayName();
+            int mtu = networkInterface.getMTU();
+            boolean up = networkInterface.isUp();
+            if (up){
+                System.out.println(String.format("正在启动并正常工作的网络设备显示名称=%s，网络设备的名称=%s，mtu=%s", displayName,name,mtu));
+            }
+
+        }
+
+    }
+    /**
+     *
+     * 1.获取网络接口的基本信息
      *
      * @throws SocketException
      */
