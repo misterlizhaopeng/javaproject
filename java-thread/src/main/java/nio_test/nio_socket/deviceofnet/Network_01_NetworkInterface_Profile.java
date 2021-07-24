@@ -1,9 +1,13 @@
 package nio_test.nio_socket.deviceofnet;
+import io.netty.util.internal.MacAddressUtil;
 import org.junit.Test;
 
+import javax.lang.model.util.ElementScanner6;
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.Objects;
 
 /**
  * @ClassName nio_test.nio_socket.deviceofnet.Network_01_NetworkInterface_Profile
@@ -19,6 +23,10 @@ import java.util.Enumeration;
  *                                  3.networkInterface.isUp() 返回true，表示已开启并正常工作，比如手机无线网，连接，这个接口就正常，如果断开，就为false；
  *                                  4.在os为windows的 网络设备中 ，可以找到 networkInterface.getDisplayName() 名称
  *                       2.获取MTU 的大小
+ *                       3.网卡子接口、虚拟接口、虚拟子接口
+ *                       4.获取机器的硬件地址
+ *                       5.获取ip 地址
+ *
  *
  *
  *
@@ -29,6 +37,120 @@ import java.util.Enumeration;
  * @Version 1.0
  **/
 public class Network_01_NetworkInterface_Profile {
+
+    /**
+     *
+     * 获取ip 地址
+     *
+     *      获取当前网络接口的网络列表:networkInterface.getInetAddresses()
+     *      InetAddress 类可以表示互联网协议 ip 地址，通过该对象里面的部分方法获取 ip 地址信息，一个网络设备可以使用多个 ip 地址；
+     *      InetAddress 有两个子类：Inet4Address Inet6Address，分别表示ipv4 的信息，ipv6 的信息
+     *
+     *
+     *
+     * @throws SocketException
+     */
+    @Test
+    public void test_05() throws SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()){
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+
+            //排除不是 已经开启并正常工作的网络设备
+            if (!networkInterface.isUp()) continue;
+            //
+
+            System.out.println(String.format("网络设备名称：%s" ,networkInterface.getName()));
+            System.out.println(String.format("网络设备显示名称：%s",networkInterface.getDisplayName()));
+            //获取当前网络接口的网络列表，此行代码就说明了一个网络设备可以使用多个 ip 地址；
+            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+            System.out.println("网络设备接口的信息：");
+            while (inetAddresses.hasMoreElements()){
+                InetAddress inetAddress = inetAddresses.nextElement();
+                String canonicalHostName = inetAddress.getCanonicalHostName();//获取网络的完全限定名称，完全限定名包括主机名称加上全路径，全路径为：序列中所有域成员；
+                String hostName = inetAddress.getHostName();//主机名称
+                byte[] address = inetAddress.getAddress();//获取主机ip地址的原始地址
+                String hostAddress = inetAddress.getHostAddress();//获取主机ip地址
+                System.out.println("\tcanonicalHostName="+canonicalHostName);
+                System.out.println("\thostName="+hostName);
+                System.out.println("\thostAddress="+hostAddress);
+                System.out.println();
+
+            }
+            System.out.println();
+        }
+
+    }
+    /**
+     * 物理地址、mac地址、硬件地址表示的就是一个意思
+     *
+     * @throws SocketException
+     */
+    @Test
+    public void test_04() throws SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while(networkInterfaces.hasMoreElements()){
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            boolean up = networkInterface.isUp();//表示是否已经开启并正常工作
+            if (up){
+                System.out.println(String.format("网络设备名称：%s", networkInterface.getName()));
+                System.out.println(String.format("网络设备显示名称：%s", networkInterface.getDisplayName()));
+                byte[] hardwareAddress = networkInterface.getHardwareAddress();
+
+                if (!Objects.isNull(hardwareAddress))
+                    System.out.println(String.format("物理地址：%s", MacAddressUtil.formatAddress(networkInterface.getHardwareAddress())));
+                else
+                    System.out.println(String.format("物理地址：%s", ""));
+                System.out.println();
+            }
+
+        }
+
+
+    }
+
+
+    /**
+     *
+     * 获取子接口(windows系统不支持，linux支持)：什么是子接口，不添加新的物理网卡，基于原有的网络接口虚拟出来的一个网络设备进行通信，这个虚拟的网络接口可以理解为软件模拟的网卡，windows不支持子接口，linux支持；
+     *
+     * 虚拟子接口：通过方法 isVirtual()可以判断；来说下什么是虚拟子接口：在linux os 上，虚拟子接口作为物理接口的子接口被创建，并给于不同的设置(如ip地址、MTU 等),通常虚拟子接口的名称为 物理接口的名称+“:”+标识该子接口的编号，因为一个物理接口可能存在多个虚拟子接口；
+     *          注意：虚拟接口 、虚拟子接口的区别，虚拟接口也是非硬件类的设备，也是由软件模拟的网络设备，该网络设备没有父网络接口；
+     *          总结：虚拟接口：1.是软件模拟的网络设备，没有父网络接口 2.虚拟子接口：是软件模拟的网络设备，有父网络接口 3.虚拟接口不一定是虚拟子接口，但虚拟子接口一定是虚拟接口；
+     *
+     *
+     * @throws SocketException
+     */
+    @Test
+    public void test_03() throws SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()){
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            int hashCode = networkInterface.hashCode();//接口的hashCode
+            String displayName=networkInterface.getDisplayName();//网络设备的显示名称
+            boolean isVirtual = networkInterface.isVirtual();//是否为虚拟子接口
+            NetworkInterface parent = networkInterface.getParent();//父接口
+            System.out.println(String.format("网络设备hashCode=%s", hashCode));
+            System.out.println(String.format("网络设备的显示名称=%s", displayName));
+            System.out.println(String.format("网络设备是否为虚拟网卡=%s",isVirtual));
+            System.out.println(String.format("父接口=%s", parent));
+
+            Enumeration<NetworkInterface> subInterfaces = networkInterface.getSubInterfaces();
+            while (subInterfaces.hasMoreElements()){
+                NetworkInterface subInterface = subInterfaces.nextElement();
+                System.out.println(String.format("\tsub-网络设备名称=%s", subInterface.getName()));
+                System.out.println(String.format("sub-网络设备的显示名称=%s", subInterface.getDisplayName()));
+                System.out.println(String.format("是否为虚拟接口=%s", subInterface.isVirtual()));
+                System.out.println(String.format("父接口的hashCode=%s", subInterface.getParent().hashCode()));
+
+
+
+            }
+
+
+        }
+
+    }
 
 
     /**
