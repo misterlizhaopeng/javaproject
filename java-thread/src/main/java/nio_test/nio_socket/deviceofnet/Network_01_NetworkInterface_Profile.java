@@ -1,11 +1,14 @@
 package nio_test.nio_socket.deviceofnet;
 import io.netty.util.internal.MacAddressUtil;
 import org.junit.Test;
+import sun.net.util.IPAddressUtil;
+import sun.security.x509.IPAddressName;
 
 import javax.lang.model.util.ElementScanner6;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Objects;
 
@@ -26,6 +29,8 @@ import java.util.Objects;
  *                       3.网卡子接口、虚拟接口、虚拟子接口
  *                       4.获取机器的硬件地址
  *                       5.获取ip 地址
+ *                          获取ip 地址基本信息
+ *                          获取本地主机和回环地址的基本信息
  *
  *
  *
@@ -38,9 +43,45 @@ import java.util.Objects;
  **/
 public class Network_01_NetworkInterface_Profile {
 
+
+    /**
+     * 获取本地主机和回环地址的基本信息
+     *      获取本地主机:InetAddress.getLocalHost()，如果本地主机有多个ip地址，该方法只返回下标为0 的ip地址；
+     *          如果想返回本机所有的ip地址，使用方法InetAddress.getAllByName;
+     *      返回本机回环地址：InetAddress.getLoopbackAddress();
+     * @throws SocketException
+     */
+    @Test
+    public void test_05_2() throws  UnknownHostException {
+        //单独通过 InetAddress 类获取
+        InetAddress localHost = InetAddress.getLocalHost();
+        InetAddress[] allByName = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
+
+        IPAddressUtil.convertFromIPv4MappedAddress(localHost.getAddress());
+        String hostAddress = localHost.getHostAddress();
+        System.out.println(hostAddress);
+        System.out.println("localHost:");
+        byte[] address = localHost.getAddress();
+        for (int h = 0; h < address.length; h++) {
+            System.out.print(address[h]+" ");
+        }
+        System.out.println();
+
+
+
+        InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
+        byte[] address1 = loopbackAddress.getAddress();
+        System.out.println("loopbackAddress:");
+        for (int i = 0; i < address1.length; i++) {
+            System.out.print(address1[i]+" ");
+        }
+        System.out.println();
+
+
+    }
     /**
      *
-     * 获取ip 地址
+     * 获取ip 地址-基本信息
      *
      *      获取当前网络接口的网络列表:networkInterface.getInetAddresses()
      *      InetAddress 类可以表示互联网协议 ip 地址，通过该对象里面的部分方法获取 ip 地址信息，一个网络设备可以使用多个 ip 地址；
@@ -51,7 +92,7 @@ public class Network_01_NetworkInterface_Profile {
      * @throws SocketException
      */
     @Test
-    public void test_05() throws SocketException {
+    public void test_05_ipbasic() throws SocketException {
         Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
         while (networkInterfaces.hasMoreElements()){
             NetworkInterface networkInterface = networkInterfaces.nextElement();
