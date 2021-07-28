@@ -5,11 +5,9 @@ import sun.net.util.IPAddressUtil;
 import sun.security.x509.IPAddressName;
 
 import javax.lang.model.util.ElementScanner6;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,20 +27,233 @@ import java.util.Objects;
  *                       3.网卡子接口、虚拟接口、虚拟子接口
  *                       4.获取机器的硬件地址
  *                       5.获取ip 地址
- *                          获取ip 地址基本信息
- *                          获取本地主机和回环地址的基本信息
+ *                          1.获取ip 地址基本信息
+ *                          2.获取本地主机和回环地址的基本信息
+ *                          3.根据主机名称获取ip 地址
+ *                          4.根据主机名称获取所有 ip 地址
+ *                          5.根据ip 字节获取 InetAddress 信息
+ *                          6.根据主机名和ip 字节获取 InetAddress 信息
+ *                          7.获得全限主机名和主机名
+ *                       6.InterfaceAddress 类的使用
+ *                       7.判断是否为点对点的设备 以及 判断当前网络设备是否支持多播
+ *                       8.NetworkInterface 类的静态方法
  *
  *
  *
  *
  *
- *
+ *;
  * @Author LP
  * @Date 2021/7/19
  * @Version 1.0
  **/
 public class Network_01_NetworkInterface_Profile {
 
+
+    /**
+     * NetworkInterface 类的静态方法
+     *      1.NetworkInterface.getByName("lo");
+     *      2.
+     *      3.
+     *
+     * @throws SocketException
+     */
+    @Test
+    public void test_08() throws SocketException, UnknownHostException {
+        NetworkInterface networkInterface = NetworkInterface.getByName("lo");//根据 networkinterface 的名称来获取 NetworkInterface 对象
+        String name = networkInterface.getName();
+        System.out.println(String.format("网络设备的名称：%s",name));
+
+        NetworkInterface networkInterface1 = NetworkInterface.getByIndex(2);//根据索引获取 NetworkInterface 对象
+        System.out.println(String.format("网络设备的名称：%s",networkInterface1.getName()));
+
+        System.out.println();
+        NetworkInterface networkInterface2 = NetworkInterface.getByInetAddress(InetAddress.getByName("127.0.0.1"));//根据ip 的InetAddress对象获取NetworkInterface对象
+        System.out.println(networkInterface2.getName());
+        System.out.println(networkInterface2.getDisplayName());
+
+
+
+    }
+    /**
+     *
+     * 判断当前网络设备是否为点对点的设备
+     *
+     * 点对点的设备是什么？通过拨号或者专线的方式建立点对点的连接已发送数据，使其成为各种主机、网桥或者路由器之间简单连接的一种通信解决方案；
+     *
+     * 什么是多播？先了解单播、广播，在看多播；
+     *          单播：设备点对点方式的网络，访问网络，发邮件或者网络聊天，都是在使用点对点的方式 传输数据；
+     *          广播：广播是一对多的形式，对网络中所有设备发送数据，不区分目标，容易造成“网络风暴” ，产生大量的网络垃圾数据，使网络变慢，严重时，造成网络瘫痪；
+     *          再看多播：多播也成为组播，是一种一对多的网络。他可以对某些计算机的IP地址进行分组，进行发送数据的方式；组播这种方式比广播传输数据的效率更高，因为
+     *                  目标明确；
+     *                  -> 多播一般通过多播IP地址来实现，多播IP地址就是D类IP地址，即 224.0.0.0 ~ 239.255.255.255 之间的 IP 地址；
+     *
+     * @throws SocketException
+     */
+    @Test
+    public void test_07() throws  SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()){
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            boolean pointToPoint = networkInterface.isPointToPoint();
+            boolean supportsMulticast = networkInterface.supportsMulticast();
+
+            System.out.println(String.format("getName 获得网络设备名称=%s", networkInterface.getName()));
+            System.out.println(String.format("getDisplayName 获取网络设备的显示名称=%s", networkInterface.getDisplayName()));
+            System.out.println(String.format("\t当前设备是否为点对点的设备：%s", pointToPoint));
+            System.out.println(String.format("\t是否支持多播：%s", supportsMulticast));
+
+
+            System.out.println();
+            System.out.println();
+        }
+    }
+
+    /**
+     *
+     * InterfaceAddress 类的使用
+     *
+     * InetAddress 对应的是ip地址信息的，而 InterfaceAddress 对应的是 网络接口的信息，可以在 InterfaceAddress 接口下获取 ip地址的 InetAddress 对象信息，
+     *      以及多播地址的InetAddress 对象信息，还有子网掩码等；
+     *
+     * 什么是网络前缀长度 ：对于ipv4 来说，也被称为子网掩码，比如：8(255.0.0.0)、16(255.255.0.0)、24(255.255.255.0); 对于ipv6：128(::1/128) 等；
+     *
+     * 小结：每个 NetworkInterface 有多个 InterfaceAddress 对象，而对于每个 InterfaceAddress 对象，只有一个 InetAddress 对象
+     * @throws SocketException
+     */
+    @Test
+    public void test_06() throws  SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()){
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            System.out.println(String.format("getName 获得网络设备名称=%s", networkInterface.getName()));
+            System.out.println(String.format("getDisplayName 获取网络设备的显示名称=%s", networkInterface.getDisplayName()));
+            List<InterfaceAddress> interfaceAddresses = networkInterface.getInterfaceAddresses();
+            for (InterfaceAddress interfaceAddress : interfaceAddresses) {
+
+                InetAddress address = interfaceAddress.getAddress();//返回 InterfaceAddress 的 InetAddress信息
+                InetAddress broadcast = interfaceAddress.getBroadcast();//返回 InterfaceAddress 的广播地址的InetAddress，只有 ipv4 才有广播地址，ipv6没有广播地址；
+                short networkPrefixLength = interfaceAddress.getNetworkPrefixLength();//返回 InterfaceAddress 前缀长度；
+                if (address!=null) {
+                    System.out.println(String.format("\taddress.getHostAddress()=%s",address.getHostAddress()));
+                }
+                if (broadcast!=null){
+                    System.out.println(String.format("\tbroadcast.getHostAddress()=%s",broadcast.getHostAddress()));
+                }
+                System.out.println(String.format("\tinterfaceAddress.getNetworkPrefixLength()=%s",networkPrefixLength));
+                System.out.println();
+            }
+        }
+    }
+
+    /**
+     *
+     * 获得全限主机名和主机名
+     *
+     * @throws UnknownHostException
+     */
+    @Test
+    public void test_05_7() throws UnknownHostException {
+        //String canonicalHostName = InetAddress.getLocalHost().getCanonicalHostName();
+        //获取本地的主机信息
+        InetAddress localHost = InetAddress.getLocalHost();
+        String canonicalHostName = localHost.getCanonicalHostName();
+        String hostAddress = localHost.getHostAddress();
+        String hostName = localHost.getHostName();
+        System.out.println(String.format("完全限定主机名称：%s", canonicalHostName));
+        System.out.println(String.format("主机ip：%s", hostAddress));
+        System.out.println(String.format("主机名称：%s", hostName));
+        System.out.println();
+
+        //使用域名创建 InetAddress 对象
+        InetAddress byName = InetAddress.getByName("www.ibm.com");
+        System.out.println(String.format("完全限定主机名称：%s",byName.getCanonicalHostName()));
+        System.out.println(String.format("主机名称：%s", byName.getHostName()));
+        System.out.println();
+
+        //使用ip 创建 InetAddress 对象
+//        InetAddress ipInetAddress = InetAddress.getByName("172.20.10.9");
+        InetAddress ipInetAddress = InetAddress.getByName("192.168.32.1");
+        System.out.println(String.format("完全限定主机名称：%s",ipInetAddress.getCanonicalHostName()));
+        System.out.println(String.format("主机名称：%s", ipInetAddress.getHostName()));
+        System.out.println();
+
+
+    }
+    /**
+     *
+     * 根据主机名和ip 字节获取 InetAddress 信息
+     *
+     * @throws UnknownHostException
+     */
+    @Test
+    public void test_05_6() throws UnknownHostException {
+        byte[] bytes={-64,-88,32,1};
+        InetAddress inetAddress = InetAddress.getByAddress("aaaa", bytes);
+        String hostAddress = inetAddress.getHostAddress();
+        System.out.println(hostAddress);
+        System.out.println(inetAddress.getHostName());
+        System.out.println(inetAddress.getClass().getName());
+
+
+    }
+
+    /**
+     * 根据ip 字节获取 InetAddress 信息
+     * @throws UnknownHostException
+     */
+    @Test
+    public void test_05_5() throws UnknownHostException {
+        byte[] bytes={-64,-88,32,1};
+        InetAddress inetAddress = InetAddress.getByAddress(bytes);
+        System.out.println(inetAddress.getHostAddress());
+
+    }
+    /**
+     *
+     * 根据主机名称获取所有ip 地址
+     *
+     * @throws UnknownHostException
+     */
+    @Test
+    public void test_05_4() throws UnknownHostException {
+        InetAddress[] inetAddresses = InetAddress.getAllByName("PC-20140405GMFU");
+        for (int i = 0; i < inetAddresses.length; i++) {
+            InetAddress inetAddress = inetAddresses[i];
+            byte[] address = inetAddress.getAddress();
+            for (int j = 0; j < address.length; j++) {
+                System.out.print((char)address[j]);
+            }
+            System.out.println();
+            System.out.println(String.format("HostAddress=%s,class name=%s", inetAddress.getHostAddress(),inetAddress.getClass().getName()));
+        }
+
+
+
+        System.out.println("obj www.baidu.com below");
+        InetAddress[] inetAddressesB = InetAddress.getAllByName("www.baidu.com");
+        for (int i = 0; i < inetAddressesB.length; i++) {
+            InetAddress inetAddress = inetAddressesB[i];
+            System.out.println(String.format("HostAddress=%s,class name=%s", inetAddress.getHostAddress(),inetAddress.getClass().getName()));
+        }
+
+
+
+    }
+    /**
+     * 根据主机名称获取ip地址
+     *       InetAddress.getByName(""); 参数可以是计算机名称、ip地址、也可以是域名；
+     */
+    @Test
+    public void test_05_3() throws UnknownHostException {
+        InetAddress inetAddress = InetAddress.getByName("PC-20140405GMFU");//计算机名称
+        System.out.println("PC-20140405GMFU's ip is:"+inetAddress.getHostAddress());
+
+
+        InetAddress inetAddressBaidu = inetAddress.getByName("www.baidu.com");//域名
+        System.out.println("www.baidu.com's ip is :"+inetAddressBaidu.getHostAddress());
+
+    }
 
     /**
      * 获取本地主机和回环地址的基本信息
@@ -53,7 +264,7 @@ public class Network_01_NetworkInterface_Profile {
      */
     @Test
     public void test_05_2() throws  UnknownHostException {
-        //单独通过 InetAddress 类获取
+        //单独通过 InetAddress 类获取ip信息
         InetAddress localHost = InetAddress.getLocalHost();
         InetAddress[] allByName = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
 
