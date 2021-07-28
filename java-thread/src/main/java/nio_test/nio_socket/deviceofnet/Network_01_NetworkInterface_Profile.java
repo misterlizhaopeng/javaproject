@@ -53,8 +53,8 @@ public class Network_01_NetworkInterface_Profile {
     /**
      * NetworkInterface 类的静态方法
      *      1.NetworkInterface.getByName("lo");
-     *      2.
-     *      3.
+     *      2.NetworkInterface.getByIndex(2)
+     *      3.NetworkInterface.getByInetAddress(InetAddress.getByName("127.0.0.1"))
      *
      * @throws SocketException
      */
