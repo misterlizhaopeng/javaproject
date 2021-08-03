@@ -5,11 +5,14 @@ import org.junit.Test;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @ClassName nio_test.nio_socket.socket_communication.A_Socket_TCP_Communication
- * @Deacription : 基于TCP 的socket通信
- *                  1.测试ServerSocket的accept方法的阻塞性（见方法 test_01_1、 test_01_2）
+ * @Deacription : 基于TCP 的socket 通信
+ *                  1.测试ServerSocket的accept方法的阻塞性（见方法 test_01_1、 test_01_2 ）
  *                  2.通过ServerSocket 写一个简易的web服务器
  *                  3.测试Socket 中 InputStream 类的read方法的阻塞性
  *                  4.服务端向客户端传递字符串
@@ -19,8 +22,10 @@ import java.net.Socket;
  *                  8.使用 Socket 传递  图片
  *                  9.TCP 连接的 3 次握手;
  *                  10.TCP 断开连接的 4 次挥手（通过wireshark查看即可）;
- *                  11.4 次挥手，断开连接
- *                  12.原理：握手的时机不在accept()接受的时候，而是在创建ServerSocket对象的时候
+ *                  11.4 次挥手，tcp 断开连接
+ *                  12.原理：握手的时机不在accept()接受的时候，而是在创建ServerSocket对象的时候(握手的时机与立即传数据的特性)
+ *                  13.多线程下，实现通讯
+ *                  14.服务端与客户端互传对象以及io 流顺序问题
  *
  * @Author LP
  * @Date 2021/7/29
@@ -30,6 +35,174 @@ public class A_Socket_TCP_Communication {
 
     private final static String HOST_ADDRESS = "localhost";
     private final static Integer HOST_PORT = 1000;
+
+
+
+
+    @Test
+    public void test_14_2() {
+
+    }
+
+    @Test
+    public void test_14_1() {
+
+    }
+
+
+    /**
+     * 线程池的技术实现server 的监听
+     *
+     */
+    @Test
+    public void test_13_3 () throws IOException {
+        Server server = new Server(HOST_PORT, 10000);
+        server.startServer();//启动服务端的监听，用线程去执行具体的任务
+
+
+    }
+
+    class Server{
+        private ServerSocket serverSocket;
+        private Executor pool;
+
+        /**
+         * 线程池实现服务端技术，服务端入口
+         *
+         * @param port 服务端绑定的端口
+         * @param poolSize 线程池大小
+         */
+        public Server(int port,int poolSize) {
+            try {
+                serverSocket = new ServerSocket(HOST_PORT);
+                pool = Executors.newFixedThreadPool(poolSize);//创建一个线程池对象
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        public void startServer(){
+            try {
+                for (;;) {
+                    Socket socket = serverSocket.accept();
+                    pool.execute(new NewThreadPool(socket));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    //线程池技术
+    class NewThreadPool implements Runnable{
+        private Socket socket;
+        public NewThreadPool(Socket socket){
+            this.socket = socket;
+
+        }
+        @Override
+        public void run() {
+            System.out.println(String.format("[当前线程id：%s，当前线程名称：%s]", Thread.currentThread().getId(),Thread.currentThread().getName()));
+            try {
+                InputStream in = socket.getInputStream();
+                InputStreamReader inReader = new InputStreamReader(in);
+                char [] chars = new char[15];//大小为15个字符的字符缓冲区
+                int readLen = inReader.read(chars);
+                while (readLen != -1){
+                    //打印接受到的客户端字符串信息
+                    System.out.println(new String(chars,0,readLen));
+                    readLen = inReader.read(chars);
+                }
+                inReader.close();
+                in.close();//内部会自动关闭socket对象
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    /**
+     * 多线程下，实现通讯 -Socket
+     *      在socket技术中心，常用的实践方式就是Socket 结合多线程技术，客户端每发起一次新的请求，就把这次请求交给这个新创建的线程执行；
+     *
+     * 测试结果：
+     *          [当前线程id：11，当前线程名称：Thread-0]
+     *          我是中国人，我自豪我是中国人，
+     *          我自豪我是中国人，我自豪
+     *          [当前线程id：12，当前线程名称：Thread-1]
+     *          我是中国人，我自豪我是中国人，
+     *          我自豪我是中国人，我自豪
+     *          [当前线程id：13，当前线程名称：Thread-2]
+     *          我是中国人，我自豪我是中国人，
+     *          我自豪我是中国人，我自豪
+     * 结论：当前没创建一个请求，服务端就会创建一个线程，这样每个请求就会以异步的方式进行执行，大大提高了程序运行时的吞吐量，提高了数据处理能力
+     */
+    @Test
+    public void test_13_2 () throws IOException {
+        for (int i = 0; i < 100; i++) {
+
+
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        OutputStream out = socket.getOutputStream();
+        //字符串长度任意
+        String str="我是中国人，我自豪我是中国人，我自豪我是中国人，我自豪";
+        out.write(str.getBytes());
+        out.close();
+        }
+    }
+
+    /**
+     *   多线程下，实现通讯 -ServerSocket
+     *      在socket技术中心，常用的实践方式就是Socket 结合多线程技术，客户端每发起一次新的请求，就把这次请求交给这个新创建的线程执行；
+     *      当然通过使用线程池技术，效率会更加高效！！
+     *      本例先使用传统的非线程池技术实现；
+     *
+     *      结论：当前没创建一个请求，服务端就会创建一个线程，这样每个请求就会以异步的方式进行执行，大大提高了程序运行时的吞吐量，提高了数据处理能力
+     */
+    @Test
+    public void test_13_1 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        int runTag=1;
+        while (runTag == 1){
+            //接受一个socket对象，具有阻塞特点，如果接受不到连接请求的情况，程序就会阻塞到这里
+            Socket socket = serverSocket.accept();
+            NewThread newThread = new NewThread(socket);
+            newThread.start();//启动一个线程，让这个新县城执行run方法
+        }
+        serverSocket.close();
+    }
+
+
+    class NewThread extends Thread {
+        private Socket socket;
+        public NewThread(Socket socket){
+            this.socket = socket;
+
+        }
+        @Override
+        public void run() {
+            System.out.println(String.format("[当前线程id：%s，当前线程名称：%s]", Thread.currentThread().getId(),Thread.currentThread().getName()));
+            try {
+                InputStream in = socket.getInputStream();
+                InputStreamReader inReader = new InputStreamReader(in);
+                char [] chars = new char[15];//大小为15个字符的字符缓冲区
+                int readLen = inReader.read(chars);
+                while (readLen != -1){
+                    //打印接受到的客户端字符串信息
+                    System.out.println(new String(chars,0,readLen));
+                    readLen = inReader.read(chars);
+                }
+                inReader.close();
+                in.close();//内部会自动关闭socket对象
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
     /**
      * 测试3次握手的时候时机- Socket
