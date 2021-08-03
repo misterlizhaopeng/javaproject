@@ -1,4 +1,5 @@
 package nio_test.nio_socket.socket_communication;
+import nio_test.nio_socket.channel.FilePahtVar;
 import org.junit.Test;
 
 import java.io.*;
@@ -14,6 +15,12 @@ import java.net.Socket;
  *                  4.服务端向客户端传递字符串
  *                  5.允许调用多次write方法进行写入操作
  *                  6.实现服务端、客户端的多次来往通信
+ *                  7.调用 Stream 的close() 方法早晨Socket关闭
+ *                  8.使用 Socket 传递  图片
+ *                  9.TCP 连接的 3 次握手;
+ *                  10.TCP 断开连接的 4 次挥手（通过wireshark查看即可）;
+ *                  11.4 次挥手，断开连接
+ *                  12.原理：握手的时机不在accept()接受的时候，而是在创建ServerSocket对象的时候
  *
  * @Author LP
  * @Date 2021/7/29
@@ -25,7 +32,198 @@ public class A_Socket_TCP_Communication {
     private final static Integer HOST_PORT = 1000;
 
     /**
+     * 测试3次握手的时候时机- Socket
+     * @throws IOException
+     */
+    @Test
+    public void test_12_2 () throws IOException {
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        OutputStream out = socket.getOutputStream();
+        for (int i = 0; i < 3; i++) {
+            out.write("11".getBytes());
+        }
+        out.close();//关闭流，内部自动关闭socket对象
+    }
+
+    /**
+     * 测试3次握手的时候时机-ServerSocket
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test_12_1 () throws IOException, InterruptedException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        Thread.sleep(Integer.MAX_VALUE);
+
+
+    }
+
+    /**
+     * 测试 tcp断开连接的4次挥手的过程- Socket
+     */
+    @Test
+    public void test_11_2 () throws IOException, InterruptedException {
+        System.out.println(String.format("client 连接准备：%s",System.currentTimeMillis()));
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        System.out.println(String.format("client 连接结束：%s",System.currentTimeMillis()));
+        socket.close();
+        Thread.sleep(2000);
+
+    }
+
+    /**
+     * 测试 tcp断开连接的4次挥手的过程- ServerSocket
+     */
+    @Test
+    public void test_11_1 () throws IOException, InterruptedException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        System.out.println(String.format("server 阻塞开始：%s", System.currentTimeMillis()));
+        Socket socket = serverSocket.accept();
+        System.out.println(String.format("server 阻塞结束：%s", System.currentTimeMillis()));
+
+        socket.close();
+        serverSocket.close();
+        Thread.sleep(2000);
+
+    }
+
+    /**
+     * 研究 TCP 建立连接的 3 次 握手
+     *      通过WireShark软件进行检测TCP的三次握手过程
+     */
+    @Test
+    public void test_09_2 () throws IOException, InterruptedException {
+        System.out.println(String.format("client 连接准备：%s",System.currentTimeMillis()));
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        System.out.println(String.format("client 连接结束：%s",System.currentTimeMillis()));
+
+        OutputStream out = socket.getOutputStream();
+        out.write("1111".getBytes());
+        out.write("222".getBytes());
+        out.write("333".getBytes());
+        Thread.sleep(500000000);
+        out.close();
+    }
+
+    /**
+     * 研究 TCP 建立连接的 3 次 握手
+     */
+    @Test
+    public void test_09_1 () throws IOException, InterruptedException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        System.out.println(String.format("server 阻塞开始：%s", System.currentTimeMillis()));
+        serverSocket.accept();
+        System.out.println(String.format("server 阻塞结束：%s", System.currentTimeMillis()));
+        Thread.sleep(Integer.MAX_VALUE);
+        serverSocket.close();
+    }
+
+    /**
+     *  使用 Socket 传递  图片 - Socket
+     */
+    @Test
+    public void test_08_2 () throws IOException {
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        //获取向socket中写入字节流的输出对象
+        OutputStream out = socket.getOutputStream();
+        //获取当前客户端的图片，并进行读取，放到字节数组的缓冲区中
+        FileInputStream fileIn = new FileInputStream(new File(FilePahtVar.getFile("/socket/cat.jpg")));
+        byte [] bytes = new byte[512];
+        int readnLen = fileIn.read(bytes);
+        while (readnLen!= -1){
+            out.write(bytes,0,readnLen);//当客户端读取内容的时候，向socket中写入客户端读取的字节内容
+            readnLen = fileIn.read(bytes);//客户端持续读取，知道读取不到字节内容
+        }
+
+        fileIn.close();
+        out.close();
+    }
+
+    /**
+     *  使用 Socket 传递 图片 - ServerSocket
+     */
+    @Test
+    public void test_08_1 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        System.out.println(String.format("开始监听：%s", System.currentTimeMillis()));
+        Socket socket = serverSocket.accept();
+        System.out.println(String.format("停止阻塞，接受到新的 socket：%s", System.currentTimeMillis()));
+
+        FileOutputStream fileOut = new FileOutputStream(new File(FilePahtVar.getFile("/socket/newCat.jpg")));
+
+        //创建一个新的字节数组缓冲区，大小为512个字节的大小
+        byte [] bytes = new byte[512];
+        //通过socket获取输入流
+        InputStream in = socket.getInputStream();
+        //开始读socket中的字节流到数组缓冲区中
+        int readLen = in.read(bytes);
+        while (readLen !=-1) {
+            fileOut.write(bytes,0,readLen);//把数组缓冲区中的字节内容写入到硬盘
+            //持续从socket中读取字节流内容
+            readLen = in.read(bytes);
+        }
+
+        //关闭资源
+        in.close();
+        fileOut.close();
+        serverSocket.close();
+
+
+    }
+
+    /**
+     * 调用 Stream 的close() 方法造成Socket关闭 -Socket
+     *      经过分析代码得知：InputStream/OutputStream（输入输出字节流对象） 关闭都会导致socket关闭，因为当前两个对象分别对应着对象：SocketInputStream/SocketOutputStream对象
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test_07_2 () throws IOException, InterruptedException {
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        OutputStream out = socket.getOutputStream();
+        out.write("我是汉字,是中国人,this's is your name,z知道不".getBytes());
+
+        //关闭资源
+        out.close();
+        //socket.close();//此处不需要再次关闭了，因为out.close()已经关闭了此socket
+        Thread.sleep(Integer.MAX_VALUE);
+    }
+
+    /**
+     * 调用 Stream 的close() 方法造成Socket关闭-ServerSocket
+     *      经过分析代码得知：InputStream/OutputStream（输入输出字节流对象） 关闭都会导致socket关闭，因为当前两个对象分别对应着对象：SocketInputStream/SocketOutputStream对象
+     * @throws IOException
+     */
+    @Test
+    public void test_07_1 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        Socket socket = serverSocket.accept();
+        InputStream in = socket.getInputStream();
+        InputStreamReader inReader = new InputStreamReader(in);//用该对象解决了client端向server端传输文字，存在乱码的问题
+        char[] chars = new char[10];
+        int readLen = inReader.read(chars);
+        while (readLen!=-1) {
+            System.out.print(new String(chars,0,readLen));
+            readLen = inReader.read(chars);
+        }
+        System.out.println();
+        in.close();
+//        OutputStream out = socket.getOutputStream();
+//
+//        out.write("hello Client".getBytes());
+//        out.close();
+
+        //关闭资源
+        //socket.close();//此处不需要再次关闭了，因为in.close()已经关闭了此socket
+        serverSocket.close();
+
+    }
+
+    /**
      * 前面实现了 1 次通信，如何实现服务端和客户端多次来往的长连接通信呢 ？- Socket
+     * 小结：
+     *      ObjectOutputStream 对象对字节流进行写操作，分三步：1.先写字节长度；2.在写字节内容；3.再flush
+     *      对于ObjectInputStream 对象对字节流进行读操作，大致也分三步：1.先读取字节长度；2.用方法readFully读取全部内容；3.打印读取的字节内容
      * @throws IOException
      */
     @Test
@@ -82,6 +280,9 @@ public class A_Socket_TCP_Communication {
 
     /**
      * 前面实现了 1 次通信，如何实现服务端和客户端多次来往的长连接通信呢 ？-ServerSocket
+     * 小结：
+     *      对于ObjectOutputStream 对象对字节流进行写操作，分三步：1.先写字节长度；2.在写字节内容；3.再flush
+     *      对于ObjectInputStream 对象对字节流进行读操作，大致也分三步：1.先读取字节长度；2.用方法readFully读取全部内容；3.打印读取的字节内容
      */
     @Test
     public void test_06_1() throws IOException {
@@ -92,22 +293,24 @@ public class A_Socket_TCP_Communication {
         //输入开始
         ObjectInputStream objectInputStream = new ObjectInputStream(in);
         int byteLen = objectInputStream.readInt();
-        byte[]bytes=new byte[byteLen];
+        byte[] bytes = new byte[byteLen];
         objectInputStream.readFully(bytes);//从流中读取内容到字节类型的数组缓冲区
         System.out.println(new String(bytes));//打印输出所有的字节数组中的内容
         //输入结束
 
         //输出开始
         OutputStream out = socket.getOutputStream();
+        String outStr="1-我是李四，请叫我张三-frmServer\n";
+        String outStr2= "2-ni name is 什么？-frmServer\n";
+//        String outStr="1-你好，客户端\n";
+//        String outStr2= "2-你好，客户端\n";
+        int outLen = (outStr + outStr2).getBytes().length;//字节长度
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
-        String outStr="1-我是李四，请叫我张三\n";
-        String outStr2= "2-ni name is 设么？\n";
-        int outLen = (outStr+outStr2).getBytes().length;//字节长度
         objectOutputStream.writeInt(outLen);
         objectOutputStream.flush();//写入socket通道中
 
         objectOutputStream.write(outStr.getBytes());
-        objectOutputStream.write(outStr.getBytes());
+        objectOutputStream.write(outStr2.getBytes());
         objectOutputStream.flush();
         //输出结束
 
@@ -120,11 +323,14 @@ public class A_Socket_TCP_Communication {
 
 
         //输出开始
-        outStr = "3-what's your name?你的名称叫什么？\n";
-        outStr2 = "4-客户你好\n";
+        outStr = "3-what's your name?你的名称叫什么？-frmServer\n";
+        outStr2 = "4-客户你好-frmServer\n";
+//        outStr = "3-你好，服务端\n";
+//        outStr2 = "4-你好，服务端\n";
         outLen = (outStr + outStr2).getBytes().length;
         objectOutputStream.writeInt(outLen);
         objectOutputStream.flush();
+
         objectOutputStream.write(outStr.getBytes());
         objectOutputStream.write(outStr2.getBytes());
         objectOutputStream.flush();
@@ -315,7 +521,7 @@ public class A_Socket_TCP_Communication {
     /**
      * 测试ServerSocket的accept方法的阻塞性-Socket客户端访问
      *      new Socket("localhost", 8080);//localhost 代表服务器的地址，8080 代表服务器的端口号；
-     *      第一个参数可以换成IP地址或者域名，如果使用域名，就会使用dns服务转换层ip地址，在访问具体的服务；
+     *      第一个参数可以换成IP地址或者域名，如果使用域名，就会使用dns服务转换层ip 地址，在访问具体的服务；
      *          如果使用错误的域名，则程序报错；
      *
      * @throws IOException
