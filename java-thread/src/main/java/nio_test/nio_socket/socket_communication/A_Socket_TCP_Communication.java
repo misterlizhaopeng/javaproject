@@ -37,16 +37,75 @@ public class A_Socket_TCP_Communication {
     private final static Integer HOST_PORT = 1000;
 
 
-
-
+    /**
+     * 服务端与客户端互传对象以及io 流顺序问题 - Socket
+     *
+     * 如果服务端或者客户度的 两个对象( ObjectOutputStream/ObjectInputStream )一接一收不对应，将会造成阻塞的现象,但是流对象（InputStream、OutputStream）对于服务端 和 客户端获取顺序没有要求；
+     *         假如server端先获取对象的顺序为：
+     *              ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+     *              ObjectInputStream objectInputStream = new ObjectInputStream(in);
+     *         那么客户端获取对象操作的顺序为：
+     *              ObjectInputStream objectInputStream = new ObjectInputStream(in);
+     *              ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     @Test
-    public void test_14_2() {
+    public void test_14_2() throws IOException, ClassNotFoundException {
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        InputStream in = socket.getInputStream();
+        OutputStream out = socket.getOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+        ObjectInputStream objectInputStream = new ObjectInputStream(in);
+
+        for (int i = 0; i < 3; i++) {
+
+            //写入
+            objectOutputStream.writeObject(new UserInfo(100l+i,"longName-client","LongPwd-client"));
+            //读取
+            UserInfo userInfo = (UserInfo)objectInputStream.readObject();
+            System.out.println(userInfo);
+        }
+        //关闭资源
+        objectOutputStream.close();
+        objectInputStream.close();
+        out.close();
+        in.close();
+
+        //socket.close();
 
     }
 
+    /**
+     * 服务端与客户端互传对象以及io 流顺序问题 -ServerSocket
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     @Test
-    public void test_14_1() {
+    public void test_14_1() throws IOException, ClassNotFoundException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        Socket socket = serverSocket.accept();
+        InputStream in = socket.getInputStream();
+        OutputStream out = socket.getOutputStream();
 
+        ObjectInputStream objectInputStream = new ObjectInputStream(in);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+        for (int j = 0; j < 3; j++) {
+            //读取
+            System.out.println((UserInfo) objectInputStream.readObject());
+            objectOutputStream.writeObject(new UserInfo(100l+j, "from server","from server pwd" ));
+
+        }
+
+        //关闭资源
+        objectOutputStream.close();
+        objectInputStream.close();
+        out.close();
+        in.close();
+//        socket.close();
+        serverSocket.close();
     }
 
 
