@@ -4,10 +4,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.nio.channels.SocketChannel;
 
 /**
@@ -20,6 +17,10 @@ import java.nio.channels.SocketChannel;
  *                  1.accept() 方法与 timeout 超时
  *                  2.构造函数参数 backlog 的意义
  *                  3.ServerSocket 构造方法的异同
+ *                  4.绑定到指定的 Socket 地址 以及 指定 backlog 参数的值
+ *                  5.验证windows 7 中的backlog中的最大值为200；
+ *                  6.获取本地SocketAddress对象，以及本地端口
+ *                  7.InetSocketAddress  类的使用
  *
  * @Author LP
  * @Date 2021/8/4
@@ -28,6 +29,127 @@ import java.nio.channels.SocketChannel;
 public class B_ServerSocket_About {
     private final static String HOST_ADDRESS = "localhost";
     private final static Integer HOST_PORT = 1000;
+
+
+    /**
+     * InetSocketAddress  类的使用 - Socket
+     */
+    @Test
+    public  void test_07_2 () throws IOException {
+        System.out.println("socket client begin");
+        Socket socket = new Socket("localhost", HOST_PORT);
+        System.out.println("socket client end");
+    }
+
+    /**
+     *  InetSocketAddress  类的使用 - ServerSocket
+     *
+     */
+    @Test
+    public  void test_07_1 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket();
+        serverSocket.bind(new InetSocketAddress(InetAddress.getByName("localhost"),HOST_PORT));
+        System.out.println("server begin");
+        serverSocket.accept();
+        System.out.println("server end");
+    }
+    /**
+     * 获取本地SocketAddress对象，以及本地端口
+     *
+     *      InetSocketAddress 代表 Socket 的IP地址 ，InetAddress 代表 IP 地址
+     *
+     */
+    @Test
+    public  void test_06() throws IOException {
+        ServerSocket serverSocket = new ServerSocket();
+        System.out.println("new ServerSocket() 无参构造函数端口为:" + serverSocket.getLocalPort());
+        serverSocket.bind(new InetSocketAddress(HOST_ADDRESS,HOST_PORT));
+        System.out.println("调用完毕bind方法后的端口是：" + serverSocket.getLocalPort());
+
+        InetSocketAddress socketAddress = (InetSocketAddress) serverSocket.getLocalSocketAddress();
+        System.out.println("socketAddress.getHostName() = " + socketAddress.getHostName());
+        System.out.println("socketAddress.getHostString() = " + socketAddress.getHostString());
+        System.out.println("socketAddress.getAddress() = " + socketAddress.getAddress());
+        System.out.println("socketAddress.getPort() = " + socketAddress.getPort());
+        serverSocket.close();
+
+
+
+    }
+
+    /**
+     * 验证windows 7 中的backlog中的最大值为200 ； - Socket
+     * @throws IOException
+     */
+    @Test
+    public  void test_05_2() throws IOException {
+        for (int i = 0; i < 5000; i++) {
+            Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+            System.out.println("client send request: "+ (i+1));
+
+        }
+
+    }
+
+    /**
+     * 验证windows 7 中的backlog 中的最大值为200 ； - ServerSocket
+     *
+     *      验证backlog 为200个，其实就是在serverSocket端的accept()方法接受socket之前停止，客户端能正常创建多少个socket，也就是有多少客户端的socket可以
+     *      进入os的等待队列，windows 7 中最大值为200，因为此实现证明了：
+     *              服务端创建ServerSocket 20s之内，客户端socket创建了 5000个socket，但到201 个的之后，就报异常了；
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    public  void test_05_1() throws IOException, InterruptedException {
+        ServerSocket serverSocket = new ServerSocket();
+        serverSocket.bind(new InetSocketAddress(HOST_PORT),Integer.MAX_VALUE);// 对backlog设置整型 最大的的值；
+        Thread.sleep(20000);//设置20s的时间
+        serverSocket.close();
+
+    }
+
+
+    /**
+     * 绑定到指定的 Socket 地址 以及 指定 backlog 参数的值 - Socket
+     */
+    @Test
+    public  void test_04_2() throws IOException {
+
+        System.out.println("client request begin");
+        Socket socket = new Socket(HOST_ADDRESS, HOST_PORT);
+        System.out.println("client request end");
+
+
+
+    }
+    /**
+     * 绑定到指定的 Socket 地址 以及 指定 backlog 参数的值 - ServerSocket
+     *
+     * a.对于serverSocket.bind(null);绑定了一个空地址，那么系统将会挑选一个临时的端口和一个有效的本地地址来绑定套接字；
+     * b.对于serverSocket.bind()的参数：SocketAddress ，SocketAddress 是一个抽象类，代表Socket地址，而对于InetAddress代表 IP 地址；
+     * c.对于 new InetSocketAddress() ，存在三个构造方法
+     *      1.只有端口，其中当前的IP地址为通配符地址，端口号的有效范围：0~65535之间。端口号传递 0 ，代表在bind操作中 os 会随机挑选一个端口；
+     *      2.有hostname，端口号，根据主机名和端口号创建套接字地址。端口号的有效范围：0~65535之间。端口号传递 0 ，代表在bind操作中 os 会随机挑选一个端口；
+     *      3.有InetAddress，端口号，根据ip地址和端口号创建套接字地址。端口号的有效范围：0~65535之间。端口号传递 0 ，代表在bind操作中 os 会随机挑选一个端口；
+     *
+     * d.backlog 的意思和直接new ServerSocket()里面 的backlog 意思完全一致，这里就不过多介绍；
+     * @throws IOException
+     */
+    @Test
+    public  void test_04_1() throws IOException {
+        ServerSocket serverSocket = new ServerSocket();
+        serverSocket.bind(new InetSocketAddress(HOST_PORT));
+
+        System.out.println("server start accept()");
+        serverSocket.accept();
+        System.out.println("server end accept()");
+
+
+    }
+
+
 
     /**
      *  ServerSocket 构造方法的异同 - Socket
