@@ -21,6 +21,26 @@ import java.nio.channels.SocketChannel;
  *                  5.验证windows 7 中的backlog中的最大值为200；
  *                  6.获取本地SocketAddress对象，以及本地端口
  *                  7.InetSocketAddress  类的使用
+ *                  8.关闭获取关闭状态
+ *                  9.判断socket的绑定状态
+ *                  10.获取serversocket的绑定的ip地址信息
+ *                  11.socket 选项：ReuseAddress
+ *                      在关闭TCP连接时，该连接在关闭之后的一段时间内保持超时状态（通常称为TIME_WAIT或者2MSL等待状态）。
+ *                      对于使用已知套接字地址或者端口号的程序来说，如果存在超时状态的链接（ip地址和端口），则应用程序可能不能将套接字绑定到所需的
+ *                      SocketAddress上。
+ *                      如果想让套接字绑定到该等待状态的链接地址上，可以通过方法 Socket.setReuseAddress(true); 实现，
+ *                          重用端口地址可以提升端口的使用效率，用较少的端口完成更多的功能；
+ *
+ *                      什么是 TIME_WAIT 状态？服务端或者客户端建立TCP链接之后，主动断开的一端，就会进入 TIME_WAIT 状态，再“ 停留若干时间 ”，再进入 closed 状态；
+ *                      在linux系统中，当在“停留若干时间”时，应用程序可以复用TIME_WAIT 的端口，这样可以提升端口的利用率；
+ *
+ *                      在linux 系统中进行测试
+ *                          在linux 发行版CentOS中，默认允许端口复用；：
+ *                          测试服务端（ServerSocket端）端口复用的情况：是通过文件TestReuseAddress 、TestReuseAddress2 在linux 下面进行测试的，执行完了TestReuseAddress，然后执行TestReuseAddress2 即可完成测试；
+ *                          测试客户端（Socket端）端口复用的情况：是通过文件TestReuseAddress3在linux下面进行测试的，重复java 执行当前文件即可完成测试；
+ *
+ *
+ *
  *
  * @Author LP
  * @Date 2021/8/4
@@ -30,6 +50,60 @@ public class B_ServerSocket_About {
     private final static String HOST_ADDRESS = "localhost";
     private final static Integer HOST_PORT = 1000;
 
+
+    /**
+     * 获取serversocket的绑定的ip地址信息
+     *   方法 getInetAddress() 获取IP地址信息；
+     *
+     * @throws IOException
+     */
+    @Test
+    public  void test_10 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket();
+        serverSocket.bind(new InetSocketAddress(HOST_ADDRESS,HOST_PORT));
+        InetAddress inetAddress = serverSocket.getInetAddress();
+        System.out.println(inetAddress.getHostAddress());
+    }
+
+
+    /**
+     * 判断socket的绑定状态
+     *
+     * @throws IOException
+     */
+    @Test
+    public  void test_09_1 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket();
+        System.out.println("1- bind stat = "+ serverSocket.isBound());//判断 socket 的绑定状态
+        serverSocket.bind(new InetSocketAddress("www.ssbaiddx.com",HOST_PORT));//这个地址不能解析，所以会抛出未解析的异常，不能解析IP地址被绑定
+        System.out.println("2- bind stat = "+ serverSocket.isBound());//判断 socket 的绑定状态
+
+
+//        serverSocket.bind(new InetSocketAddress(HOST_ADDRESS,HOST_PORT));
+//        System.out.println("2- bind stat = "+ serverSocket.isBound());//判断 socket 的绑定状态
+
+
+    }
+
+
+    /**
+     * serverSocket.close() 关闭套接字；
+     *
+     * 在accept（）方法中，所有当前阻塞的线程都会抛出SocketException 的异常；
+     * 如果此套接字有一个与之关联的通道，则关闭通道；
+     *
+     *
+     * @throws IOException
+     */
+    @Test
+    public  void test_08 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket(HOST_PORT);
+        System.out.println("1-serverSocket.isClosed() = " + serverSocket.isClosed());//false ，表示套接字未关闭
+        serverSocket.close();
+        System.out.println("2-serverSocket.isClosed() = " + serverSocket.isClosed());//true ，表示关闭了套接字
+
+
+    }
 
     /**
      * InetSocketAddress  类的使用 - Socket
@@ -44,11 +118,34 @@ public class B_ServerSocket_About {
     /**
      *  InetSocketAddress  类的使用 - ServerSocket
      *
+     *      InetSocketAddress 实现IP 套接字地址（IP + port）或者（主机名 + port） ；
+     *      inetSocketAddress.getHostName() 方法返回主机名称；值得注意的是：如果地址使用IP字面量创建的，则此方法可能会触发名称服务反向查找，也就是访问DNS服务，通过ip地址查找对应的域名；
+     *      inetSocketAddress.getHostString() 方法返回主机名称或者主机的ip地址；注意，如果同一个InetSocketAddress下先调用方法getHostName()
+     *          在调用方法getHostString()，那么方法 getHostString() 会返回主机名称；
+     *      inetSocketAddress1.getAddress() 方法：获取 IP地址的InetAddress对象;
+     *      创建未解析的套接字地址;
+     *
+     *
      */
     @Test
     public  void test_07_1 () throws IOException {
         ServerSocket serverSocket = new ServerSocket();
-        serverSocket.bind(new InetSocketAddress(InetAddress.getByName("localhost"),HOST_PORT));
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getByName("172.20.10.9"), HOST_PORT);
+        System.out.println(inetSocketAddress.getHostName());//同一个对象InetSocketAddress的实例下，此方法会影响getHostString()方法的值，并且getHostString()方法返回主机名；
+        System.out.println(inetSocketAddress.getHostString());
+
+        InetSocketAddress inetSocketAddress1 = new InetSocketAddress(InetAddress.getByName("172.20.10.9"), HOST_PORT);
+        System.out.println(inetSocketAddress1.getHostString());
+        System.out.println(inetSocketAddress1.getHostName());//同一个对象InetSocketAddress的实例下，这样，此方法就不会影响getHostString()方法的值了；
+
+        InetAddress inetAddress = inetSocketAddress1.getAddress();//获取 IP地址的InetAddress对象
+        System.out.println("inetAddress=" + inetAddress);
+
+        //创建未解析的套接字地址
+        InetSocketAddress inetSocketAddress2 = new InetSocketAddress("www.baidu.com", 80);
+
+
+        serverSocket.bind(inetSocketAddress);
         System.out.println("server begin");
         serverSocket.accept();
         System.out.println("server end");
