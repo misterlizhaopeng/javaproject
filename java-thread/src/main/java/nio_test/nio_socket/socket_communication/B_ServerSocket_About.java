@@ -3,6 +3,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.*;
 import java.nio.channels.SocketChannel;
@@ -39,7 +41,7 @@ import java.nio.channels.SocketChannel;
  *                          测试服务端（ServerSocket端）端口复用的情况：是通过文件TestReuseAddress 、TestReuseAddress2 在linux 下面进行测试的，执行完了TestReuseAddress，然后执行TestReuseAddress2 即可完成测试；
  *                          测试客户端（Socket端）端口复用的情况：是通过文件TestReuseAddress3在linux下面进行测试的，重复java 执行当前文件即可完成测试；
  *
- *
+ *                  12.socket 选项：ReceiveBufferSize
  *
  *
  * @Author LP
@@ -52,7 +54,74 @@ public class B_ServerSocket_About {
 
 
     /**
-     * 获取serversocket的绑定的ip地址信息
+     * socket 选项：ReceiveBufferSize - Socket
+     * @throws IOException
+     */
+    @Test
+    public  void test_12_2 () throws IOException {
+        Socket socket = new Socket();
+        System.out.println("client begin socket.getReceiveBufferSize() = " + socket.getReceiveBufferSize());
+        socket.connect(new InetSocketAddress(HOST_ADDRESS,HOST_PORT));
+        //socket.connect(new InetSocketAddress("192.168.25.141",9916));
+        System.out.println("client end socket.getReceiveBufferSize() = " + socket.getReceiveBufferSize());
+        OutputStream out = socket.getOutputStream();//socket输出对象，也可以理解为通过该字节流对象想socket中写入数据，传输到另一端
+        for (int i = 0; i < 100; i++) {
+            String outStr="1111111111111111111111111111111111111111111111" +
+                    "22222222222222222222222222222222222222222" +
+                    "333333333333333333333333333333333333" +
+                    "444444444444444444444444444444444" +
+                    "55555555555555555555555555555555555555555" +
+                    "66666666666666666666666666666666666" +
+                    "92392390r8t89wq8req89wqhfkfasdkl;fasdladsf" +
+                    "777777777777777777777777777777777777";
+            out.write(outStr.getBytes());
+        }
+        out.write("end!".getBytes());
+        out.close();
+//        socket.close();//字节流对象关闭，同时会关闭socket，所以此处注释了
+    }
+
+    /**
+     * socket 选项：ReceiveBufferSize - ServerSocket
+     *
+     * ReceiveBufferSize 的功能介绍：设置内部套接字接受缓冲区的大小和设置远程同位体的TCP 接受窗口大小；
+     *
+     *  serverSocket.setReceiveBufferSize(103);
+     *      //更改服务端的接受缓冲区的大小，高速客户端的窗口大小为103，窗口大小为：传输报文数据的len的值，可以通过wireshark监视得到
+     *
+     *  注意：对于客户端，SocketOptions.SO_RCVBUF选项 必须在connect之前设置，对于服务端，SocketOptions.SO_RCVBUF 选项必须在bind之前设置
+     * @throws IOException
+     */
+    @Test
+    public  void test_12_1 () throws IOException {
+        ServerSocket serverSocket = new ServerSocket();
+        System.out.println("1-serverSocket.getReceiveBufferSize() = " + serverSocket.getReceiveBufferSize());//输出结果：serverSocket.getReceiveBufferSize() = 8192
+        serverSocket.setReceiveBufferSize(103);//更改服务端的接受缓冲区的大小，高速客户端的窗口大小为103，窗口大小为：传输报文数据的len的值，可以通过wireshark监视得到
+        System.out.println("2-serverSocket.getReceiveBufferSize() = " + serverSocket.getReceiveBufferSize());
+        serverSocket.bind(new InetSocketAddress(HOST_ADDRESS,HOST_PORT));//将服务端的socket绑定到当前地址（检查绑定socket地址）
+        Socket socket = serverSocket.accept();
+        InetSocketAddress remoteSocketAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
+        System.out.println("remoteSocketAddress.getHostString() = " + remoteSocketAddress.getHostString());
+        System.out.println("remoteSocketAddress.getHostName() = " + remoteSocketAddress.getHostName());
+        InputStream in = socket.getInputStream();
+        InputStreamReader inReader = new InputStreamReader(in);
+        char[] chars = new char[1024];
+        int readLen = inReader.read(chars);
+        while (readLen !=-1){
+            System.out.println(new String(chars,0,readLen));
+            readLen = inReader.read(chars);
+        }
+
+        //关闭资源
+        inReader.close();
+        in.close();
+//        socket.close();//字节流对象关闭，同时会关闭socket，所以此处注释了
+        serverSocket.close();
+
+    }
+
+    /**
+     * 获取serversocket的绑定的ip 地址信息
      *   方法 getInetAddress() 获取IP地址信息；
      *
      * @throws IOException
