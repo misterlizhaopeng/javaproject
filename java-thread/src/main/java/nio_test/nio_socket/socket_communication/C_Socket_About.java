@@ -39,17 +39,28 @@ public class C_Socket_About {
      */
     @Test
     public void test_04_2() throws IOException {
-        Socket socket = new Socket(HOST_ADDRESS_2, HOST_PORT);
+        Socket socket = new Socket();
+        socket.bind(new InetSocketAddress(HOST_ADDRESS_2, 1004));
+        socket.connect(new InetSocketAddress(HOST_ADDRESS_2, HOST_PORT));
         socket.close();
     }
 
     /**
      * 获取本地地址 、本地socket 地址 -ServerSocket
      *
-     * socket.getLocalAddress(); 获取socket的本地ip地址信息
-     * socket.getLocalSocketAddress();获取socket的本地的socket地址信息
+     * socket.getLocalAddress(); 获取此socket 绑定的本地ip地址信息
+     * socket.getLocalSocketAddress();获取此socket 绑定的端的的socket地址信息
+     *
+     * socket.getInetAddress(); 返回此 socket连接到的远程的ip地址信息，如果套接字socket未连接，发挥null；
+     * socket.getRemoteSocketAddress();返回此 socket连接到的远程的socket 信息，如果套接字socket未连接，发挥null；
      *
      *
+     *
+     *  输出结果：
+     *          A-服务器ip地址：=-84 20 10 9
+     *          A-服务端端口=1000
+     *          B-客户端ip地址：=-84 20 10 9
+     *          B-客户端端口=1004
      */
     @Test
     public void test_04_1() throws IOException {
@@ -57,15 +68,30 @@ public class C_Socket_About {
         serverSocket.bind(new InetSocketAddress(HOST_ADDRESS_2,HOST_PORT));
         Socket socket = serverSocket.accept();
         InetAddress inetAddress = socket.getLocalAddress();
-        InetSocketAddress inetSocketAddress = (InetSocketAddress)socket.getLocalSocketAddress();
+        //InetSocketAddress inetSocketAddress = (InetSocketAddress)socket.getLocalSocketAddress();
 
-        System.out.println("服务器ip地址：");
+        System.out.print("A-服务器ip地址：=");
         byte[] address = inetAddress.getAddress();
         for (int j = 0; j < address.length; j++) {
-            System.out.print((char)address[j]);
+            System.out.print(address[j] + " ");
         }
         System.out.println();
-        System.out.println("服务端端口=" + socket.getLocalSocketAddress());
+        System.out.println("A-服务端端口=" + ((InetSocketAddress) socket.getLocalSocketAddress()).getPort());
+
+
+        // 返回此 socket连接到的远程的ip地址信息，如果套接字socket未连接，发挥null；
+        inetAddress = socket.getInetAddress();
+        // 返回此 socket连接到的远程的socket 信息，如果套接字socket未连接，发挥null；
+        //InetSocketAddress remoteInetSocketAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+
+        System.out.print("B-客户端ip地址：=");
+        byte[] address1 = inetAddress.getAddress();
+        for (int i = 0; i < address1.length; i++) {
+            System.out.print(address1[i] + " ");
+        }
+        System.out.println();
+        System.out.println("B-客户端端口=" + ((InetSocketAddress) socket.getRemoteSocketAddress()).getPort());
+
 
         //关闭资源
         socket.close();
