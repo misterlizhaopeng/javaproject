@@ -51,8 +51,8 @@ public class C_Socket_About {
      * socket.getLocalAddress(); 获取此socket 绑定的本地ip地址信息
      * socket.getLocalSocketAddress();获取此socket 绑定的端的的socket地址信息
      *
-     * socket.getInetAddress(); 返回此 socket连接到的远程的ip地址信息，如果套接字socket未连接，发挥null；
-     * socket.getRemoteSocketAddress();返回此 socket连接到的远程的socket 信息，如果套接字socket未连接，发挥null；
+     * socket.getInetAddress(); 返回此 socket连接到的远程的ip地址信息，如果套接字socket未连接，返回 null；
+     * socket.getRemoteSocketAddress();返回此 socket连接到的远程的socket 信息，如果套接字socket未连接，返回null；
      *
      *
      *
