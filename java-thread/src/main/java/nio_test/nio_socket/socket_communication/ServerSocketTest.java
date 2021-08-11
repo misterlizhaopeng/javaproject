@@ -20,7 +20,7 @@ public class ServerSocketTest {
 
 
     public static void main(String[] args) throws IOException {
-        
+
         ServerSocket serverSocket = new ServerSocket();
         System.out.println("1-serverSocket.getReceiveBufferSize() = " + serverSocket.getReceiveBufferSize());//输出结果：serverSocket.getReceiveBufferSize() = 8192
         serverSocket.setReceiveBufferSize(67);
